@@ -1,0 +1,126 @@
+{% include 'admin-includes/header.html' %}
+{% load static %}{% load extras %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'frontend:index' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a class="white-text" href="{% url 'static_pages:our_services_list' %}">Frontend Services</a>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-title mb-0">
+					Frontend Services
+				</div>
+                <div class="page-btn d-flex flex-wrap">
+                    <a class="btn btn-primary" href="{% url 'static_pages:add_our_service' %}"><i class="fas fa-plus me-1"></i>Add Services</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="dataview">
+                    <form onsubmit="Loader()" action="{% url 'static_pages:our_services_list' %}" method="GET">
+                        <div class="table-responsive ">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Created on</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <thead>
+                                    <tr class="search-row">
+                                        <td><input type="text" value="{{title}}" class="form-control" name="title" maxlength="20"></td>
+                                        <td><input type="text" value="{{description}}" class="form-control" name="description" maxlength="20"></td>
+                                        <td><input type="date" onkeydown="return false" value="{{created_on}}" class="position-relative form-control" onchange="this.form.submit()" name="created_on"></td>
+                                        <td><button type="submit" class="btn btn-primary">Search</button></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if our_services %}
+                                    {% for service in our_services %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center display-images">
+                                                {% if service.icon %}
+													<a href="{{service.icon.url}}" data-fancybox>
+														<img src="{{service.icon.url}}" class="rounded-lg me-2" width="24" alt="img">
+													</a>
+												{% else %}
+													<a href="{% static 'admin-assets/images/dp.png' %}" data-fancybox>
+														<img src="{% static 'admin-assets/images/dp.png' %}"
+														class="rounded-lg me-2" width="24" alt="img">
+													</a>
+												{% endif %}
+                                                {% if service.title %}{{ service.title | truncatechars_html:50}}{% else %}--{% endif %}
+                                            </div>
+                                        </td>
+                                        <td class='clickable-row' data-href="{% url 'static_pages:view_our_service' service.id %}">{% if service.description %}{{service.description|safe| truncatechars_html:50}}{% else %}-{% endif %}</td>
+                                        <td class='clickable-row' data-href="{% url 'static_pages:view_our_service' service.id %}">
+                                            <script>
+                                                var d = ConvertDateTime("{{ service.created_on|date:'Y-m-d' }}", "{{ service.created_on|time:'H:i' }}");
+                                                document.write(d);
+                                            </script>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex">
+                                                <a href="{% url 'static_pages:edit_our_service' service.id %}" class="btn btn-info shadow btn-xs sharp me-1"><i class="fa fa-edit"></i></a>
+                                                <a href="{% url 'static_pages:view_our_service' service.id %}" class="btn btn-success shadow btn-xs sharp me-1"><i class="fa fa-eye"></i></a>
+                                                <a style="margin-right:5px" href="{% url 'static_pages:delete_our_service' service.id %}" message="Are you sure you want to delete this page?" class="btn btn-danger shadow btn-xs sharp action_confirm" ><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                    {% if our_services.has_other_pages %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {% if our_services.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% url_replace request 'page' our_services.previous_page_number %}">&laquo;</a>                                          
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">&laquo;</span>
+                                </li>
+                            {% endif %}
+                            {% for i in our_services.paginator.page_range %}
+                                {% if our_services.number == i %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                                    </li>
+                                {% elif i > our_services.number|add:'-5' and i < our_services.number|add:'5' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{% url_replace request 'page' i %}">{{ i }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if our_services.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% url_replace request 'page' our_services.next_page_number %}">&raquo;</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">&raquo;</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'admin-includes/footer.html' %}

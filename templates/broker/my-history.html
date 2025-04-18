@@ -1,0 +1,100 @@
+{% include 'broker/includes/header.html' %}
+{% load static %}
+{% load extras %}
+
+
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'broker/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'broker:broker_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">My Earnings</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12 mx-auto">
+                            <div class="card">
+                                <div class="card-header d-flex align-items justify-content-between flex-wrap">
+                                    <h4 class="card-title ern-hd">My Earnings</h4>
+                                    <div class="total-ern">
+<i class="fas fa-usd-circle"></i>
+                                        <p>Total Earning</p>
+                                        <h4>${{total_earnings|floatformat:"2g"}}</h4>
+                                    </div>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="sidebar-widget my-properties table-responsive">
+                                        <table class="table datatable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="pl-2"> Buyer Name</th>
+                                                    <th> Property</th>
+                                                    <th>Email Address</th>
+                                                    <th>Contact Number</th>
+                                                    <th>Commission Earned</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for i in data %}
+                                                <tr>
+                                                    <td>
+                                                        <h6 class="m-0">{{i.customer.email|split_email}}</h6>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <div class="image myelist">
+                                                                {% if i.property.property_images.all%}
+                                                                <a ><img src="{{i.property.property_images.first.image.url}}" alt="my-properties-3" class ="img-fluid"></a>
+                                                                {% else %}
+                                                                <a href=""><img
+                                                                        alt="my-properties-3"
+                                                                        src="{% static 'admin-assets/images/property-1.jpg' %}"
+                                                                        class="img-fluid"></a>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="inner ms-3">
+                                                                <a href="">
+                                                                    <h2>{% if i.property.name %}{{i.property.name}}{% else %}-{% endif %}</h2>
+                                                                </a>
+                                                                <figure><i class="lni-map-marker"></i> {{i.property.address}}</figure>
+                                                                <ul class="starts text-left mb-0">
+                                                                    <li class="mb-0"><i class="fa fa-star"></i>
+                                                                    </li>
+                                                                    <li class="mb-0"><i class="fa fa-star"></i>
+                                                                    </li>
+                                                                    <li class="mb-0"><i class="fa fa-star"></i>
+                                                                    </li>
+                                                                    <li class="mb-0"><i class="fa fa-star"></i>
+                                                                    </li>
+                                                                    <li class="mb-0"><i class="fa fa-star"></i>
+                                                                    </li>
+                                                                    <li class="ml-3 mb-0">(6 Reviews)</li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{i.customer.email}}</td>
+                                                    <td>{{i.customer.mobile_no}}</td>
+                                                    <td>
+                                                        ${{ i.commission_earned| floatformat:"2g"}}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'broker/includes/footer.html' %}

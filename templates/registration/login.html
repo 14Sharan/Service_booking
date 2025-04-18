@@ -1,0 +1,70 @@
+{% load static %}
+{% include 'registration/includes/header.html' %}
+<form class="theme-form" id="login" onsubmit="Loader(this.id)" action="{% url 'accounts:login' %}" method="POST">
+    {% csrf_token %}
+    <h4 class="text-center">Sign In</h4>
+    <p class="text-center">Enter your email &amp; password to sign in your account</p>
+    <div class="form-group mb-3">
+        <label for="email" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Please enter your email address" name="email" {% if email %}value="{{email}}"{% endif %}>
+    </div>
+    <div class="form-group mb-3">
+        <label for="password" class="form-label">Password</label>
+        <div class="pass-group">
+            <input type="password" class="form-control pass-input" id="password" placeholder="Please enter your password" name="password" {% if password %}value="{{password}}"{% endif %}>
+            <span class="fas toggle-password fa-eye-slash"></span>
+        </div>
+    </div>
+    <input type = "hidden" name = "returnUrl" value= "{{returnUrl}}">
+    <input type = "hidden" name = "broker" value= "{{broker_id}}">
+    <input type = "hidden" name = "property" value= "{{property}}">
+    <div class="remember-card d-flex align-items-center justify-content-between mb-4">
+        <div class="checkbox p-0 d-flex">
+            <input id="remember_me" type="checkbox" name="remember_me"> 
+            <label class="text-muted ms-2" for="remember_me">Remember Me</label>
+        </div>
+        <a class="link" href="">Forgot Password?</a>
+    </div>
+    <div class="text-end mt-3">
+        <button type="submit" class="btn login-btn btn-block w-100">Sign In</button>
+    </div>
+</form>
+{% include 'registration/includes/footer.html' %}
+<script type="text/javascript">
+    (function () {
+        window.onpageshow = function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+    })();
+    $("#login").validate({
+        rules: {
+            email: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                email: true,
+            },
+            password: {
+                required: true,
+                minlength: 8,
+                maxlength: 35,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            },
+        },
+        messages: {
+            email: {
+                required: "Please enter your email address",
+            },
+            password: {
+                required: "Please enter password",
+                minlength: "At least 8 characters required!",
+                maxlength: "At most 35 characters only!"
+            },
+        }
+    });
+</script>

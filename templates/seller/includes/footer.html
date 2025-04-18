@@ -1,0 +1,155 @@
+{% load static %}
+<footer>
+    <div class="copyright-footer">
+        <p class="mb-0 text-center">
+            Copyright © 2023 BROKI-FI | All Rights Reserved. 
+        </p>
+    </div>
+</footer>
+</div>
+
+
+
+
+
+<script src="{% static 'admin-assets/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.fancybox.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.8.4/swiper-bundle.min.js"></script>
+<script src="{% static 'admin-assets/js/script.js' %}"></script>
+<script src="{% static 'admin-assets/js/validate.js' %}"></script>
+<script src="{% static 'admin-assets/js/additional-methods.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/feather.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.slimscroll.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/intlTelInput-jquery.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/sweetalert.js' %}"></script>
+<script src="https://cdn.ckeditor.com/4.17.2/standard/ckeditor.js"></script>
+<script src="{% static 'admin-assets/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/ckeditor-validation.js' %}"></script>
+<script>
+    $(document).ready( function () {
+        $('.datatable').DataTable({
+            "bSort": true,
+            "bPaginate": false,
+            "searching": false,
+            "bDestroy": true,
+            "bInfo" : false,
+            "aaSorting": [],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1]
+            }]
+        });
+    });
+    
+    $(document).ready(function () {
+        $('#full_year').text(new Date().getFullYear());
+    });
+    function Loader(formID) {
+        if ($('#' + formID).length) {
+            if ($('#' + formID).valid()) {
+                $('body').append('<div id="loading"><i class="fas fa-spinner"></i></div>');
+                $('body').css('pointer-events', 'none');
+                $('.btn').css('pointer-events', 'none');
+            }
+        } else {
+            $('body').append('<div id="loading"><i class="fas fa-spinner"></i></div>');
+            $('body').css('pointer-events', 'none');
+            $('.btn').css('pointer-events', 'none');
+        }
+    }
+    window.addEventListener('DOMContentLoaded', event => {
+        // Toggle the side navigation
+        const sidebarToggle = document.body.querySelector('#sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', event => {
+                event.preventDefault();
+                document.body.classList.toggle('mini-sidebar');
+                localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('mini-sidebar'));
+            });
+        }
+    });
+    // window resize on media query //
+    $(window).on("load, resize", function mobileViewUpdate() {
+        var viewportWidth = $(window).width();
+        if (viewportWidth < 991) {
+            $("body").addClass("mini-sidebar");
+        }
+        if (viewportWidth > 991) {
+            $("body").removeClass("mini-sidebar");
+        }
+    });
+    $(document).ready(function () {
+        var viewportWidth = $(window).width();
+        if (viewportWidth < 991) {
+            $("body").addClass("mini-sidebar");
+        }
+        if (viewportWidth > 991) {
+            $("body").removeClass("mini-sidebar");
+        }
+    });
+
+    $('.action_confirm').click(function(event) {
+        event.preventDefault();        
+        swal({
+            title: $(this).attr('message'),
+            text: "",
+            icon: "warning",
+            buttons: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                location.href=$(this).attr('href')
+                Loader()
+            }
+        });
+    });
+</script>
+<script>
+    var slider = new Swiper ('.gallery-slider', {
+        slidesPerView: 1,
+        centeredSlides: true,
+        loop: false,
+        loopedSlides: 6, 
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+    });
+    
+    var thumbs = new Swiper ('.gallery-thumbs', {
+        slidesPerView: 'auto',
+        spaceBetween: 10,
+        centeredSlides: true,
+        loop: false,
+        slideToClickedSlide: true,
+    });
+    slider.controller.control = thumbs;
+    thumbs.controller.control = slider;
+
+
+
+    // window resize on media query //
+    $(window).on("load, resize", function mobileViewUpdate() {
+        var viewportWidth = $(window).width();
+        if (viewportWidth < 991) {
+                $("body").addClass("mini-sidebar");
+        }
+        if (viewportWidth > 991) {
+                $("body").removeClass("mini-sidebar");
+        }
+    });
+    $(document).ready( function () {
+        var viewportWidth = $(window).width();
+        if (viewportWidth < 991) {
+                $("body").addClass("mini-sidebar");
+        }
+        if (viewportWidth > 991) {
+                $("body").removeClass("mini-sidebar");
+        }
+    });
+
+  </script>
+</body>
+</html>

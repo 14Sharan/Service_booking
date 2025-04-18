@@ -1,0 +1,26 @@
+{% load static %}
+{% load extras %}
+<div class="chat-lists">
+    <div class="chat-list">
+    {% for buyer in buyers %}
+    <a href="?chat_user={{buyer.id}}" class="d-flex align-items-center chat-list-item">
+        <div class="flex-shrink-0">
+            {% if buyer.profile_pic %}
+            <img src="{{buyer.profile_pic.url}}" alt="Thumb">
+            {% else %}
+            <img src="{% static 'admin-assets/images/dp.png' %}" alt="Thumb">
+            {% endif %}
+        </div>
+        <div class="flex-grow-1 ms-3">
+            <h3 style="color:#079795;">{% if buyer.full_name %}{{buyer.full_name|capfirst}}{% else %}{{buyer.email|split_email|capfirst}}{% endif%}</h3>
+            <p>
+                {{buyer.id|last_message|truncatechars:20}}
+                {% if request.user.id|unread_message_count:buyer.id %}
+                <span class="message-count my-2 mt-0">{{request.user.id|unread_message_count:buyer.id}}</span>
+                {% endif %}
+            </p>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+</div>

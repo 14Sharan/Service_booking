@@ -1,0 +1,105 @@
+{% include 'customer/includes/header.html' %}
+{% load static %}
+
+<!-- page title area start  -->
+<section class="page-title-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-title-wrapper text-center">
+                    <h1 class="page-title mb-10">Delete Account</h1>
+                    <div class="breadcrumb-menu">
+                        <nav aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs">
+                            <ul class="trail-items">
+                                <li class="trail-item trail-begin">
+                                    <a href="{% url 'customer:customer_dashboard' %}"><span>Home</span></a>
+                                </li>
+                                <li class="trail-item trail-end"><span>Delete Account</span></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="user_dashboard py-5">
+    <div class="container">
+        <div class="dashboard_area">
+            <div class="row">
+                {% include 'customer/includes/sidebar.html' %}
+                <div class="col-xl-9 col-lg-8 wow">
+                    <div class="dashboard_content">
+                        <div class="inner_card">
+                            <div class="db_head">
+                                <div class="db_inr_hd">
+                                    <h4>Delete Account</h4>
+                                </div>
+                            </div>
+                            <div class="delete-account">
+                                <form  method='POST' action="" id="delete-account" enctype="multipart/form-data">
+                                    <div class="form-group mb-3">
+                                        <select class="form-select" aria-label="Default select example" id='reason' name='reason'>
+                                            <option value="">Reason for deleting account</option>
+                                            {% for i in reasons %}
+                                            <option value="{{i.id}}">{{i.title}}</option>
+                                            {% endfor %}
+                                            <option value='others'>others</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3" id = "other_option" style = "display:none">
+                                        <textarea class="form-control" placeholder="Describe Your Reason"
+                                            id="content" name='content' style="height: 100px"></textarea>
+                                    </div>
+                                    <div class="mt-4 text-end">
+                                        <button type="submit" class="theme-btn">
+                                            Delete Account
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'customer/includes/footer.html' %}
+
+<script>
+    $("#delete-account").validate({
+        rules: {
+            reason: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            },
+            content: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            }
+        },
+        messages: {
+            reason: {
+                required: "Please select reason",
+            }, 
+            content: {
+                required: "Please Describe your reason"
+            }
+        },
+    });   
+    $('#reason').click(function(){
+        let val = $("#reason").val()
+        if (val == "others"){
+            $("#other_option").css("display","block")
+        }
+        else{
+            $("#other_option").css("display","none")
+        }
+    })
+</script>

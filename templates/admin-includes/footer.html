@@ -1,0 +1,184 @@
+{% load static %}
+
+{% comment %} <footer style='color:#000'>
+    <div class="copyright-footer" style='background:none'>
+        <p class="mb-0 text-center">
+        </p>
+    </div>
+</footer> {% endcomment %}
+
+</div>
+
+<script src="{% static 'admin-assets/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.fancybox.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/feather.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.slimscroll.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/script.js' %}"></script>
+<script src="{% static 'admin-assets/js/validate.js' %}"></script>
+<script src="{% static 'admin-assets/js/additional-methods.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/selectize.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/selectize_no_results.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/highcharts.src.js' %}"></script>
+<script src="{% static 'admin-assets/js/histogram-bellcurve.js' %}"></script>
+<script src="{% static 'admin-assets/js/intlTelInput-jquery.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/sweetalert.js' %}"></script>
+<script src="{% static 'admin-assets/js/Swiper_3.4.1_js_swiper.min.js' %}"></script>
+<script src="https://cdn.ckeditor.com/4.17.2/standard/ckeditor.js"></script>
+<script src="{% static 'admin-assets/js/ckeditor-validation.js' %}"></script>
+
+
+<script>
+    $('.action_confirm').click(function(event) {
+        event.preventDefault();        
+        swal({
+            title: $(this).attr('message'),
+            text: "",
+            icon: "warning",
+            buttons: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                location.href=$(this).attr('href')
+                Loader()
+            }
+        });
+    });
+    $.validator.addMethod(
+        "strongpassword",
+        function(value, element, regexp) {
+            var re = new RegExp(regexp);
+            return this.optional(element) || re.test(value);
+        },
+        "Please Choose Strong Password."
+    );
+    jQuery.validator.addMethod("is_email_exists", 
+    function(value, element) {
+        let is_valid = true
+        $.ajax({
+            url: "",
+            type: "GET",
+            data: { email: value },
+            async:false,
+            success: function (data) {
+                if(data.email == true){
+                    is_valid = false
+                }else{
+                    is_valid =  true
+                }
+              
+            },
+          });        
+        return is_valid
+    },'Email already exists!');
+
+
+    jQuery.validator.addMethod("is_username_exists", 
+    function(value, element) {
+        let is_valid = true
+        $.ajax({
+            url: "",
+            type: "GET",
+            data: { username: value },
+            async:false,
+            success: function (data) {
+                if(data.username == true){
+                    is_valid = false
+                }else{
+                    is_valid =  true
+                }
+                
+            },
+            });        
+        return is_valid
+    },'Username already exists!');
+
+    jQuery.validator.addMethod("is_mobile_exists", 
+    function(value, element) {
+        let is_valid = true
+        $.ajax({
+            url: "",
+            type: "GET",
+            data: { mobile_no: value,country_code:$('#country_code').val()},
+            async:false,
+            success: function (data) {
+                if(data.mobile_no == true){
+                    is_valid = false
+                }else{
+                    is_valid =  true
+                }
+                
+            },
+            });        
+        return is_valid
+    },'Mobile number already exists!');
+</script>
+<script>
+    // Refresh page on Browser Back Button to Remove the Loader
+    (function () {
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+    })();
+    function Loader(formID) {
+        if ($('#'+formID).length){
+            if ($('#'+formID).valid()){
+                $('body').append('<div id="loading"><i class="fas fa-spinner"></i></div>');
+                $('body').css('pointer-events','none');
+                $('.btn').css('pointer-events','none');
+            }
+        }else{
+            $('body').append('<div id="loading"><i class="fas fa-spinner"></i></div>');
+            $('body').css('pointer-events','none');
+            $('.btn').css('pointer-events','none');
+        }
+    }
+
+    $(document).ready( function () {
+        $('#full_year').text(new Date().getFullYear());
+    });
+
+    if ($('textarea').val()) {
+        $('textarea').val($('textarea').val().trim())
+    }
+    
+    if($('.clickable-row').length > 0 ){
+		$(document).on('click', '.clickable-row', function() {
+			window.location = $(this).data("href");
+		});
+	}
+
+    $(function () {
+	    $('[data-bs-toggle="tooltip"]').tooltip();
+    })
+  
+
+    function ConfirmFormSubmission(form){
+        swal({
+            title: $(form).attr('message'),
+            text: "",
+            icon: "warning",
+            buttons: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                $(form).attr('onsubmit',true)
+                $(form).submit()
+                Loader($(form).attr('id'))
+            }
+        });
+        return false
+    }
+
+
+    $(document).ready(function () {
+	$('.timezone').val(Intl.DateTimeFormat().resolvedOptions().timeZone)
+    });
+</script>
+</body>
+</html>

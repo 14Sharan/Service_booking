@@ -1,0 +1,271 @@
+{% include "admin-includes/header.html" %}{% load static %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'accounts:index' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href=""
+                                class="white-text">Super Admin</a></li>
+                        <li class="breadcrumb-item active">Profile</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="page-btn d-flex flex-wrap">
+                <a class="btn btn-secondary" href="{% url 'accounts:index' %}"><i class="fa fa-angle-left me-1"></i>
+                    Back</a>&nbsp;
+                {% comment %} <a class="btn btn-primary" href="{% url 'accounts:import_curencies_excel' %}"><i class="fa fa-plus me-1"></i>
+                    Import Currencies data</a> {% endcomment %}
+               
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mt-3">
+                <div class="card product-profile-wrapper">
+                    <div class="product-detail-wrapper">
+                        <div class="profile-imgbox">
+                            {% if user.profile_pic %}
+                            <a class="product-img" href="{{ user.profile_pic.url }}" data-fancybox="gallery">
+                                <img style="height: auto;" src="{{ user.profile_pic.url }}" alt="image">
+                            </a>
+                            {% else %}
+                            <a class="product-img" href="{% static 'admin-assets/images/dp.png' %}"
+                                data-fancybox="gallery">
+                                <img style="height: auto;" src="{% static 'admin-assets/images/dp.png' %}" alt="image">
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 productdetails">
+                                <ul class="product-bar">
+                                    <li>
+                                        <h4>Id </h4>
+                                        <h6>{% if user.id %}{{user.id}}{% else %}-{% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Username </h4>
+                                        <h6>{% if user.username %}{{user.username}}{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Email </h4>
+                                        <h6>{% if user.email %}{{user.email}}{% else %} -- {% endif %}</h6>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6 productdetails">
+                                <ul class="product-bar">
+                                    <li>
+                                        <h4>User Role </h4>
+                                        <h6>
+                                            {% if user.role_id == 1 %}
+                                            <span class="badge bg-info">SUPER ADMIN</span>
+                                            {% elif user.role_id == 2 %}
+                                            <span class="badge bg-dark">BUYER</span>
+                                            {% elif user.role_id == 3 %}
+                                            <span class="badge bg-primary">SELLER</span>
+                                            {% else %}
+                                            <span class="badge bg-primary">BROKER</span>
+                                            {% endif %}
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h4>Created On </h4>
+                                        <h6>
+                                            <script>
+                                                var date = ConvertDateTime("{{ user.created_on|date:'Y-m-d' }}", "{{ user.created_on|time:'H:i' }}");
+                                                document.write(date);
+                                            </script>
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h4>Last Login </h4>
+                                        <h6>
+                                            {% if user.last_login %}
+                                            <script>
+                                                var date = ConvertDateTime("{{ user.last_login|date:'Y-m-d' }}", "{{ user.last_login|time:'H:i' }}");
+                                                document.write(date);
+                                            </script>
+                                            {% else %}-{% endif %}
+                                        </h6>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-12 text-end mt-4">
+                                <a class="btn btn-primary" href="">Update</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% comment %} <div class="row mt-3">
+            <div class="col-lg-12 col-sm-12 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex location-radius">
+                            <h5 class="info-step-head">Location Radius</h5>
+                            <a data-bs-toggle="modal" data-bs-target="#location-radius" class="btn btn-primary"><i
+                                    class="fa fa-edit me-1"></i>Update</a>
+                        </div>
+                        <div class="productdetails">
+                            <ul class="product-bar">
+                                <li>
+                                    <h4>Location Radius (Km) </h4>
+                                    <h6>{{location_radius.radius_in_km}} Km</h6>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div> {% endcomment %}
+            {% comment %} <div class="col-lg-12 col-sm-12 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex location-radius">
+                            <h5 class="info-step-head">Admin Commission</h5>
+                            <a data-bs-toggle="modal" data-bs-target="#admin-commision" class="btn btn-primary"><i
+                                    class="fa fa-edit me-1"></i>Update</a>
+                        </div>
+                        <div class="productdetails">
+                            <ul class="product-bar">
+                                <li>
+                                    <h4>Broker Percentage </h4>
+                                    <h6>{% if commission.broker_percentage %}{{commission.broker_percentage}}%{% else %}{{default_commission}}%{% endif %}</h6>
+                                </li>
+                                <li>
+                                    <h4>Seller Percentage </h4>
+                                    <h6>{% if commission.seller_percentage %}{{commission.seller_percentage}}%{% else %}{{default_commission}}%{% endif %}</h6>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div> {% endcomment %}
+        {% comment %} </div> {% endcomment %}
+    </div>
+</div>
+{% comment %} <div class="modal fade" id="location-radius">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Location Radius</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form">
+                    <form id="radius" onsubmit="Loader(this.id)" action="{% url 'users:update_location_radius' %}"
+                        method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row justify-content-center">
+                            <div class="form-group mb-3 col-md-12 required-field">
+                                <label class="form-label">Location Radius (Km)</label>
+                                <input type="number" placeholder="Enter Location Radius" name="radius_in_km"
+                                    onkeypress="return /(Enter|[0-9])/i.test(event.key)"
+                                    value="{{location_radius.radius_in_km}}" class="form-control" maxlength="4" min="0"
+                                    max="2000">
+                            </div>
+                            <div class="mt-2 col-md-12 text-end">
+                                <button class="btn btn-primary" type="submit">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> {% endcomment %}
+
+{% comment %} <div class="modal fade" id="admin-commision">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Admin Commission</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form">
+                    <form id="commision" onsubmit="Loader(this.id)" action="{% url 'accounts:set_commission' %}"
+                        method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row justify-content-center">
+                            <div class="form-group mb-3 col-md-12 required-field">
+                                <label class="form-label">Admin Commission</label>
+                                <input type="number" placeholder="Enter Broker Percentage" name="broker_percentage"
+                                    onkeypress="return /(Enter|[0-9])/i.test(event.key)"
+                                    value="{% if commission.broker_percentage %}{{commission.broker_percentage}}{% else %}{{default_commission}}{% endif %}" class="form-control" maxlength="4" min="0"
+                                    max="50">
+                            </div>
+                            <div class="form-group mb-3 col-md-12 required-field">
+                                <input type="number" placeholder="Enter Seller Percentage" name="seller_percentage"
+                                    onkeypress="return /(Enter|[0-9])/i.test(event.key)"
+                                    value="{% if commission.seller_percentage %}{{commission.seller_percentage}}{% else %}{{default_commission}}{% endif %}" class="form-control" maxlength="4" min="0"
+                                    max="50">
+                            </div>
+                            <div class="mt-2 col-md-12 text-end">
+                                <button class="btn btn-primary" type="submit">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> {% endcomment %}
+{% include "admin-includes/footer.html" %}
+<script>
+    $("#radius").validate({
+        rules: {
+            radius_in_km: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                min: 1,
+                max: 2000,
+                number: true
+            },
+        },
+        messages: {
+            radius_in_km: {
+                required: "Please enter location radius",
+            },
+        },
+    });  
+
+
+    $("#commision").validate({
+
+        rules: {
+            broker_percentage: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                min: 1,
+                max: 50,
+                number: true
+            },
+            seller_percentage: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                min: 1,
+                max: 50,
+                number: true
+            },
+        },
+        messages: {
+            broker_percentage: {
+                required: "Please enter broker percentage",
+            },
+            seller_percentage: {
+                required: "Please enter seller percentage",
+            },
+        },
+    });  
+
+</script>

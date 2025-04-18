@@ -1,0 +1,259 @@
+{% include 'seller/includes/header.html' %}
+{% load static %}
+{% load extras %}
+
+
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'seller/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'seller:seller_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Documentation</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12 mx-auto">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Documentation</h4>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="sidebar-widget my-properties">
+                                    
+                                            <table class="table datatable">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="pl-2"> Property Name</th>
+                                                        <th>Mandate Document</th>
+                                                        <th>Title Document</th>
+                                                        <th>Created On</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <thead>
+                                                    <form onsubmit="Loader()" action="" method="GET">
+                                                        <tr class="search-row">
+                                                            <td><input type="text" value="{{name}}" class="form-control" name="name" maxlength="20"></td>
+                                                            <td><input type="text"  value=""  readonly class="form-control" maxlength="20"></td>
+                                                            <td><input type="text"  value=""  readonly class="form-control" maxlength="20"></td>
+                                                            <td><input type="date" value="{{created_on}}" class="form-control" name="created_on" maxlength="50"></td>
+                                                            <td><button type="submit" class="theme-btn">Search</button></td>
+                                                        </tr>
+                                                    </form>
+                                                </thead>
+                                                <tbody>
+                                                    {% for property in properties %}
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="user-img">
+                                                                    {% if property.property_images.all %}
+                                                                    <a href="{% url 'seller:property_details' property.id%}"><img alt="my-properties-3" src="{{property.property_images.all.first.image.url}}" class="img-fluid"></a>
+                                                                    {% else %}
+                                                                    <a href="{% static 'admin-assets/images/property-1.jpg' %}"><img alt="my-properties-3" src="{% static 'admin-assets/images/property-1.jpg' %}" class="img-fluid"></a>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="inner ms-3">
+                                                                    <a href="{% url 'seller:property_details' property.id%}">
+                                                                        <h2>{{property.name}}</h2>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+
+                                                        <td>
+                                                            {% if property.propertiesdocumentations_set.all %}
+                                                                {% for data in property.propertiesdocumentations_set.all %}
+                                                                    {% if data.signed_document %}
+                                                                        <a data-bs-toggle="modal" data-bs-target="#upload_signed_document" onclick="GetProperty('{{property.id}}')" href=""><img alt="my-properties-3" src="{% static 'admin-assets/images/document.png' %}"></a>
+                                                                        <a href = "{{data.signed_document.url}}" download class = "theme-btn">Download</a>
+                                                                        {% else %}
+                                                                    <a data-bs-toggle="modal" data-bs-target="#upload_signed_document" onclick="GetProperty('{{property.id}}')" href=""><img alt="my-properties-3" src="{% static 'admin-assets/images/upload.png' %}"></a>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            {% else %}
+                                                                <a data-bs-toggle="modal" data-bs-target="#upload_signed_document" onclick="GetProperty('{{property.id}}')" href=""><img alt="my-properties-3" src="{% static 'admin-assets/images/upload.png' %}"></a>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if property.propertiesdocumentations_set.all %}
+                                                                {% for data in property.propertiesdocumentations_set.all %}
+                                                                    {% if data.broki_fi_document %}
+                                                                        <a data-bs-toggle="modal" data-bs-target="#upload_broki_fi_document" onclick="GetProperty('{{property.id}}')" href=""><img alt="my-properties-3" src="{% static 'admin-assets/images/document.png' %}"></a>
+                                                                        <a href = "{{data.broki_fi_document.url}}" download class = "theme-btn">Download</a>
+
+                                                                        {% else %}
+                                                                    <a data-bs-toggle="modal" data-bs-target="#upload_broki_fi_document" onclick="GetProperty('{{property.id}}')" href=""><img alt="my-properties-3" src="{% static 'admin-assets/images/upload.png' %}"></a>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            {% else %}
+                                                                <a data-bs-toggle="modal" data-bs-target="#upload_broki_fi_document" onclick="GetProperty('{{property.id}}')" href=""><img alt="my-properties-3" src="{% static 'admin-assets/images/upload.png' %}"></a>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            <script>
+                                                                var d = ConvertDateTime("{{ property.created_on|date:'Y-m-d' }}", "{{ property.created_on|time:'H:i' }}");
+                                                                document.write(d);
+                                                            </script>
+                                                        </td>
+                                                        <td>
+                                                            <a href="{% url 'seller:document_details' property.id %}" class = "theme-btn">View Details</a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div> 
+                               
+                                    </div>
+                                    {% if properties.has_other_pages %}
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination">
+                                            {% if properties.has_previous %}
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                    href="?{% url_replace request 'page' properties.previous_page_number %}">&laquo;</a>
+                                            </li>
+                                            {% else %}
+                                            <li class="page-item disabled">
+                                                <span class="page-link">&laquo;</span>
+                                            </li>
+                                            {% endif %}
+                                            {% for i in properties.paginator.page_range %}
+                                            {% if properties.number == i %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                                            </li>
+                                            {% elif i > properties.number|add:'-5' and i < properties.number|add:'5' %} <li class="page-item">
+                                                <a class="page-link" href="?{% url_replace request 'page' i %}">{{ i }}</a>
+                                                </li>
+                                                {% endif %}
+                                                {% endfor %}
+                                                {% if properties.has_next %}
+                                                <li class="page-item">
+                                                    <a class="page-link"
+                                                        href="?{% url_replace request 'page' properties.next_page_number %}">&raquo;</a>
+                                                </li>
+                                                {% else %}
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">&raquo;</span>
+                                                </li>
+                                                {% endif %}
+                                        </ul>
+                                    </nav>
+                                    {% endif %} 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="upload_signed_document" data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Mandate Document</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form d-flex justify-content-between">
+                    <form onsubmit="Loader(this.id)" id="add-signed-document" action="{% url 'seller:upload_document' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class=" col-lg-12 form-row d-flex justify-content-between">
+                                <div class="col-lg-10  form-group required-field col-md-12">
+                                    <label class="form-label">Mandate Document</label>
+                                    <input type="file" placeholder="Please enter category name" name="signed_document" class="form-control" >
+                                    <input type = 'hidden'  name = "property" id = "signed_document">
+                                </div>
+                                <div class="col-lg-2 text-center" style='margin-top: 37px;'>
+                                    <button type="submit" class="btn btn-primary">Save</a>
+                                </div>
+                            </div>
+                            </div> 
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="upload_broki_fi_document" data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Title Document</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form">
+                    <form onsubmit="Loader(this.id)" id="add-broki-fi-document" action="{% url 'seller:upload_document' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class=" col-lg-12 form-row d-flex justify-content-between">
+                            <div class="col-lg-10  form-group required-field col-md-12">
+                                <label class="form-label">Title Document</label>
+                                <input type="file"  name="broki_fi_document" class="form-control" >
+                                <input type = 'hidden'  name = "property" id = "broki_fi_document">
+                            </div>
+                            <div class="col-lg-2 text-center" style='margin-top: 37px;'>
+                                <button type="submit" class="btn btn-primary">Save</a>
+                            </div>
+                        </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'seller/includes/footer.html' %}
+
+<script>
+    function GetProperty(id){
+        $('#signed_document').val(id);
+        $('#broki_fi_document').val(id);
+    } 
+
+
+    $("#add-signed-document").validate({
+        rules: {
+            signed_document: {
+                required:true,
+                accept: "jpg,png,jpeg,svg,pdf"
+            }
+        },
+        messages: {
+            signed_document: {
+                required:"Please choose file",
+                accept: "Please upload file in these format only (jpg, jpeg, png,svg,pdf)"
+            }
+            
+        },
+    }); 
+
+
+    $("#add-broki-fi-document").validate({
+        rules: {
+            broki_fi_document: {
+                required:true,
+                accept: "jpg,png,jpeg,svg,pdf"
+            }
+        },
+        messages: {
+            broki_fi_document: {
+                required:"Please choose file",
+                accept: "Please upload file in these format only (jpg, jpeg, png,svg,pdf)"
+            }
+            
+        },
+    }); 
+</script>
+

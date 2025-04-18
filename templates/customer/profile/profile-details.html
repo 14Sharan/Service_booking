@@ -1,0 +1,75 @@
+{% include 'customer/includes/header.html' %}
+{% load static %}
+<section class="page-title-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-title-wrapper text-center">
+                    <h1 class="page-title mb-10">Dashboard</h1>
+                    <div class="breadcrumb-menu">
+                        <nav aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs">
+                            <ul class="trail-items">
+                                <li class="trail-item trail-begin"><a href="{% url 'customer:customer_dashboard' %}"><span>Home</span></a></li>
+                                <li class="trail-item trail-end"><span>Dashboard</span></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="user_dashboard py-5">
+    <div class="container">
+        <div class="dashboard_area">
+            <div class="row">
+                {% include 'customer/includes/sidebar.html' %}
+                <div class="col-xl-9 col-lg-8 wow">
+                    <div class="dashboard_content">
+                        <div class="inner_card">
+                            <div class="db_head">
+                                <div class="db_inr_hd">
+                                    <h4>Personal Information</h4>
+                                </div>
+                                <div class="add_list">
+                                    <a href="{% url 'customer:update_customer_profile' %}" class="edit-btn"><i class="fa fa-fw fa-pencil me-0"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <small class="text-muted">First Name: </small>
+                            <p>{% if user.first_name %}{{user.first_name}}{% else %}--{% endif %}</p>
+                            <hr>
+                            <small class="text-muted">Last Name: </small>
+                            <p>{% if user.last_name %}{{user.last_name}}{% else %}--{% endif %}</p>
+                            <hr>
+                            <small class="text-muted">Email address: </small>
+                            <p>{% if user.email %}{{user.email}}{% else %}--{% endif %}</p>
+                            <hr>
+                            <small class="text-muted">Date Of Birth: </small>
+                            <p>{% if user.dob %}{{user.dob}}{% else %}--{% endif %}</p>
+                            <hr>
+                            <small class="text-muted">Address: </small>
+                            <p>{% if user.address %}{{user.address}}{% else %}--{% endif %}</p>
+                            <hr>
+                            <small class="text-muted">State: </small>
+                            <p>{% if user.state %}{{user.state}}{% else %}--{% endif %}</p>
+                            <hr>
+                            <small class="text-muted">Country: </small>
+                            <p>{% if user.country %}{{user.country}}{% else %}--{% endif %}</p>
+                            <hr>
+                            <small class="text-muted">Phone: </small>
+                            <p>{% if user.mobile_no %}{{user.country_code}}{{user.mobile_no}}{% else %}--{% endif %}</p>
+                            <hr>
+                            <small class="text-muted">Company/Organization: </small>
+                            <p>{% if user.company %}{{user.company}}{% else %}--{% endif %}</p>
+                            <hr>
+                            <small class="text-muted">Personal Info: </small>
+                            <p>{% if user.bio %}{{user.bio | safe}}{% else %}--{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'customer/includes/footer.html' %}

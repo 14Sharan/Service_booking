@@ -1,0 +1,75 @@
+{% include 'seller/includes/header.html' %}
+{% load static %}
+{% load extras %}
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'seller/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'seller:seller_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Blog Details</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12 mx-auto">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between">
+                                    <h4 class="card-title">Blog Detail</h4>
+                                    <a class="btn theme-btn btn-sm" href="{% url 'seller:buyers_list' %}" ><i class="fa fa-angle-left me-1"></i> Back</a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="sidebar-widget my-properties ">
+                                        <div class="blog-single-area py-5">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="blog-single-wrapper">
+                                                            <div class="blog-single-content">
+                                                                <div class="blog-thumb-img">
+                                                                    {% if blog.image %}
+                                                                    <img src="{{blog.image.url}}" alt="thumb">
+                                
+                                                                    {% else %}
+                                                                    <img src="assets/images/digital-content.png" alt="thumb">
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="blog-info">
+                                                                    <div class="blog-meta">
+                                                                        <div class="blog-meta-left">
+                                                                            <ul>
+                                                                                <li><i class="far fa-user"></i><a href="#">{% if blog.created_by.full_name %}{{blog.created_by.full_name}}{% else %}{{blog.created_by.email|split_email}}{% endif %}</a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                        {% comment %} <div class="blog-meta-right">
+                                                                            <a href="#" class="share-btn"><i class="far fa-share-alt"></i>Share</a>
+                                                                        </div> {% endcomment %}
+                                                                    </div>
+                                                                    <div class="blog-details">
+                                                                        <h3 class="blog-details-title mb-20">{{blog.title}}
+                                                                        </h3>
+                                                                        <p class="mb-10">
+                                                                           {{blog.description|safe}}
+                                                                        </p>
+                                
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'seller/includes/footer.html' %}

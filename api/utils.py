@@ -1,6 +1,7 @@
-from django.http import JsonResponse
 from .models import PhoneOTP
 import random
+from rest_framework.pagination import PageNumberPagination
+
 def generate_otp():
     return str(random.randint(100000, 999999))
 def send_otp_view(mobile_no):
@@ -16,3 +17,8 @@ def send_otp_view(mobile_no):
     return message
 
    
+class ServicePagination(PageNumberPagination):
+    page_size = 10 
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+

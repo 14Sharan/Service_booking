@@ -1,0 +1,354 @@
+{% include "admin-includes/header.html" %}{% load static %}{% load extras %}
+<style>
+     .mob-form-group {
+    position: relative;
+}
+.mob-form-group i{
+    color: red;
+    position: absolute;
+    right: -3px;
+    top: 8px;
+}
+</style>
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <h4>Update Contact Details</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'frontend:index' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a class="white-text" href="{% url 'contact_us:contactus_list' %}">Contact Us</a>
+                        </li>
+                        <li class="breadcrumb-item active">Update Details</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="page-btn d-flex flex-wrap">
+                <a class="btn btn-secondary" href="{% url 'contact_us:contactus_list' %}"><i class="fa fa-angle-left me-1"></i> Back</a>
+            </div>
+        </div>
+            
+        <div class="card">
+            <div class="card-body">
+                <form id="edit-details" onsubmit="return CheckAddress(this.id)" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="form-group required-field">
+                                <label class="form-label">Email</label>
+                                <input type="text" {% if contact_details.email %}value="{{ contact_details.email }}"{% else %}placeholder="Enter Email"{% endif %} maxlength="50" name="email" class="form-control">
+                            </div>
+                        </div>
+
+                        {% if not contactus_mobile  %}
+                        <div class="col-lg-5 col-md-6 col-12 d1">
+                            <div class="form-group">
+                                <label class="form-label">Mobile Number</label>
+                                <div class="">
+                                    <input type="hidden" value="" name="contact_id" class="form-control" maxlength="50">
+                                    <input id="country_code" type="hidden" value="{% if contact.country_code %}{{contact.country_code}}{% else %}+234{% endif %}" name="country_code" class="form-control" maxlength="20">
+                                    <input type="hidden" value="{% if contact.country_iso_code %}{{contact.country_iso_code}}{% else %}ng{% endif %}"  name="country_iso_code" id="country_iso_code" class="form-control"  maxlength="10">
+                                    <input country_code_id="country_code" iso_code_id="country_iso_code" id="mobile_no" type="text" onkeypress="return /[0-9]/i.test(event.key)" placeholder="Enter Phone Number" value="{% if contact.mobile_no %}{{contact.mobile_no}}{% endif %}" name="mobile_no" class="form-control mobile_no" maxlength="20">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% for contact in contactus_mobile %}
+                        <div class="col-lg-5 col-md-6 col-12 d1">
+                            <div class="form-group mob-form-group">
+                                <label class="form-label">Mobile Number</label>
+                                <div class="">
+                                    {% if not forloop.first %}
+                                    <i style="color:red;" onclick="RemoveNumber(this)" class="fas fa-trash me-1"></i>
+                                    {% endif %}
+                                    <input type="hidden" value="{{contact.id}}" name="contact_id" class="form-control" maxlength="50">
+                                    <input id="country_code-{{contact.id}}" type="hidden" value="{{contact.country_code}}" name="country_code" class="form-control" maxlength="20">
+                                    <input type="hidden" value="{{contact.country_iso_code}}"  name="country_iso_code" id="country_iso_code-{{contact.id}}" class="form-control"  maxlength="10">
+                                    <input id="mobile_no" country_code_id="country_code-{{contact.id}}" iso_code_id="country_iso_code-{{contact.id}}"  type="text" onkeypress="return /[0-9]/i.test(event.key)" placeholder="Enter Phone Number" value="{% if contact.mobile_no %}{{contact.mobile_no}}{% endif %}" name="mobile_no" class="form-control mobile_no " maxlength="20">
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="col-lg-1 col-md-6 col-12" >
+                            <div class="form-group ">
+                                <label class="form-label">Add More </label>
+                                <a data-bs-toggle="modal" data-bs-target="#add_more_mobile_no" onclick='AddMobileno()' class="btn btn-danger shadow btn-xs sharp me-1" href=""><i class="fa fa-plus"> Add</i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-6 col-12">
+                            <div class="form-group required-field">
+                                <label class="form-label">Address</label>
+                                <input type="text" {% if contact_details.address %}value="{{ contact_details.address }}"{% else %}placeholder="Enter Address"{% endif %} maxlength="500" name="address" id="address" class="form-control">
+                                <input type="hidden" name="latitude" id="latitude" {% if contact_details.latitude %}value="{{contact_details.latitude}}" {% else %}value="30.6800"{% endif %}>
+                                <input type="hidden" name="longitude" id="longitude" {% if contact_details.longitude %}value="{{contact_details.longitude}}"{% else %}value="76.7221"{% endif %}>
+                                <span class="edit-details-error error" ></span>
+                            </div>
+                        </div>
+                        <div id="content" >
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="form-label">Facebook</label>
+                                <input type="text" {% if contact_details.facebook_url %}value="{{ contact_details.facebook_url }}"{% else %}placeholder="Enter Facebook Url"{% endif %} name="facebook_url" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="form-label">Instagram</label>
+                                <input type="text" {% if contact_details.instagram_url %}value="{{ contact_details.instagram_url }}"{% else %}placeholder="Enter Instagram Url"{% endif %} name="instagram_url" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="form-label">LinkedIn</label>
+                                <input type="text" {% if contact_details.linkedin_url %}value="{{ contact_details.linkedin_url }}"{% else %}placeholder="Enter LinkedIn Url"{% endif %} name="linkedin_url" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="form-label">Twitter</label>
+                                <input type="text" {% if contact_details.twitter_url %}value="{{ contact_details.twitter_url }}"{% else %}placeholder="Enter Twitter Url"{% endif %} name="twitter_url" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-lg-12 col-md-12 col-12">
+                            <div class="form-group">
+                                <label class="form-label">Footer Text</label>
+                                <textarea placeholder="Enter footer text" name="footer_text" id="footer_text" class="form-control">{{contact_details.footer_text|safe}}</textarea>
+                                <label id="footer-text-error" class="error" for="footer_text"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <button type="submit" class="btn btn-primary me-2">Save</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ADD MORE CONTACT MODAL -->
+<div class="modal fade" id="add_more_mobile_no" data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Mobile no</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form">
+                    <form onsubmit="Loader(this.id)" id="add-mobile-no" action="{% url 'contact_us:add_new_contact_no' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="form-row justify-content-center">
+                                <input type='hidden' name='id' id='id'>
+                                <div class="form-group required-field col-md-12">
+                                    <label class="form-label">Mobile no</label>
+                                    <input id="country_code_two" type="hidden" value="+234" name="country_code2" class="form-control" maxlength="20">
+                                    <input type="hidden" value="ng"  name="country_iso_code2" id="country_iso_code_two" class="form-control"  maxlength="10">
+                                    <input id="mobile_no2" country_code_id="country_code_two" iso_code_id="country_iso_code_two" type="text" onkeypress="return /[0-9]/i.test(event.key)" placeholder="Enter Phone Number" value="" name="mobile_no2" class="form-control mobile_no" maxlength="20">
+                                </div>
+                                <div class="col-lg-12 text-center">
+                                    <button type="submit" class="btn btn-primary">Save</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "admin-includes/footer.html" %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_PLACES_KEY}}&libraries=places&callback=CheckAddress" async defer></script>
+<script>
+
+function removeRow (input) {
+  input.parentNode.remove()
+}
+    
+    CKEDITOR.replace('footer_text',{
+        disallowedContent: 'img'
+    });
+
+    jQuery.validator.addMethod("footermax", function (value, element) {  
+    var idname = $(element).attr('id');  
+    var editor = CKEDITOR.instances[idname];  
+    var ckValue = GetTextFromHtml(editor.getData()).replace(/<[^>]*>/gi, '').trim();
+    if (ckValue.length > 300 ) {    
+        $(element).val(ckValue);
+    }else {  
+        $(element).val(editor.getData());  
+    }
+    return $(element).val().length < 300;
+    }, "Maximum length should not exceed 300 characters");  
+
+
+    function GetTextFromHtml(html) {  
+        var dv = document.createElement("DIV");  
+        dv.innerHTML = html;  
+        return dv.textContent || dv.innerText || "";  
+    }
+
+    $("#add-mobile-no").validate({
+        rules:{
+            mobile_no2:{
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                number: true,
+                minlength: 8,
+                maxlength: 15,
+            },
+        },
+        messages:{
+            mobile_no2:{
+                required: "Please enter your mobile number",
+                minlength: "Mobile number should be at least 8 digits",
+                maxlength: "Mobile number should not be more than 15 digits",
+            }
+        }
+    })
+
+
+    $("#edit-details").validate({
+        ignore:[],
+        rules: {
+            address: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            },
+            email: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                email: true,
+            },
+            mobile_no: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                number: true,
+                minlength: 8,
+                maxlength: 15,
+            },
+            facebook_url:{
+                url: true,
+            },
+            instagram_url:{
+                url: true,
+            },
+            linkedin_url:{
+                url: true,
+            },
+            twitter_url:{
+                url: true,
+            },
+            footer_text:{
+                footermax: true,
+            }
+        },
+        messages: {
+            address: {
+                required: "Please enter address"
+            },
+            email: {
+                required: "Please enter your email address",
+            },
+            mobile_no: {
+                required: "Please enter your mobile number",
+                minlength: "Mobile number should be at least 8 digits",
+                maxlength: "Mobile number should not be more than 15 digits",
+            },
+            facebook_url: {
+                url: "Please enter a valid usrl",
+            },
+            instagram_url: {
+                url: "Please enter a valid usrl",
+            },
+            linkedin_url: {
+                url: "Please enter a valid usrl",
+            },
+            twitter_url: {
+                url: "Please enter a valid usrl",
+            },
+            footer_text:{
+                footermax: "Maximum length should not exceed 300 characters"
+            },
+            errorPlacement: function (error, element) {
+                if (element.attr("name") == "footer_text") {
+                    error.insertAfter(".error");
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        }
+    });  
+
+    $("#address").keyup(function () {
+        var autocomplete = new google.maps.places.Autocomplete($("#address")[0], {});
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var place = autocomplete.getPlace();
+            $('#latitude').val(place.geometry.location.lat())
+            $('#longitude').val(place.geometry.location.lng())
+        });
+    });
+    $('#address').change(function(){
+        $('.edit-details-error').text("");
+    })
+    $('#address').on('keypress', function(e) {
+        return e.which !== 13;
+    });
+    function CheckAddress(formID){
+        if ($('#'+formID).length){
+            if ($('#'+formID).valid()){
+                if ($('#latitude').val() == "" && $('#longitude').val() == ""){
+                    $('.'+formID+'-error').text("Please enter a valid location")
+                    return false;
+                }
+                else{
+                    $('.'+formID+'-error').text("")
+                    Loader(formID);
+                    return true;
+                }
+            }
+        }
+    }
+    
+
+    // for each mobile number 
+    if($('.mobile_no').length > 0){
+        $('.mobile_no').each(function(){
+            let country_code_id = $(this).attr('country_code_id').trim()
+            let iso_code_id = $(this).attr('iso_code_id').trim()
+            let initial_country = $('#'+iso_code_id).val().trim()
+            if(!initial_country){
+                initial_country = "ng"
+            }
+            $(this).intlTelInput({
+                initialCountry:initial_country,
+                separateDialCode: true,
+            }).on('countrychange', function (e, countryData) {
+                $('#'+country_code_id).val("+"+$(this).intlTelInput("getSelectedCountryData").dialCode)
+                $('#'+iso_code_id).val($(this).intlTelInput("getSelectedCountryData").iso2)
+            });
+            
+        })
+    }
+     
+
+    function RemoveNumber(object){
+        
+    $(object).parents()[2].remove()
+    }
+</script>

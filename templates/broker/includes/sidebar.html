@@ -1,0 +1,60 @@
+
+
+<div class="sidebar" id="sidebar">
+    <div class="header-left active d-flex align-items-center">
+        <a href="/" class="logo logo-normal w-100">
+            <img src="/static/admin-assets/images/" alt="img">
+        </a>
+        <a id="toggle_btn" class="desk-toggle-btn" href="javascript:void(0);">
+                             
+        </a>
+    </div>
+    <div class="sidebar-backshadow"></div>
+    <div class="slimScrollDiv">
+        <div class="sidebar-inner slimscroll">
+            <div id="sidebar-menu" class="sidebar-menu">
+                <ul>
+
+                    <li {% if dashboard %} class="active" {% endif %} href="{% url 'broker:broker_dashboard' %}">
+                        <a href="{% url 'broker:broker_dashboard' %}">
+                            <i class="fas fa-bars"></i><span> Dashboard</span>
+                        </a>
+                    </li>
+                    <li {% if my_properties %} class="active" {% endif %} href="{% url 'broker:properties_list' %}">
+                        <a href="{% url 'broker:properties_list' %}">
+                            <i class="far fa-building"></i><span>Properties</span>
+                        </a>
+                    </li>
+                    <li {% if my_history %} class="active" {% endif %} href="{% url 'broker:my_history' %}">
+                        <a href="{% url 'broker:my_history' %}">
+                            <i class="fa fa-clock" aria-hidden="true"></i><span>My Earnings</span>
+                        </a>
+                    </li>
+                   <li {% if buyers %} class="active" {% endif %} href="{% url 'broker:buyers_list' %}">
+                        <a href="{% url 'broker:buyers_list' %}">
+                            <i class="fas fa-credit-card"></i><span>Clients</span>
+                        </a>
+                    </li>
+                   <li {% if support_chat %} class="active" {% endif %} href="{% url 'chat:chat_screen' %}">
+                        <a href="{% url 'chat:chat_screen' %}">
+                            <i class="fas fa-headset"></i><span>Support Chat</span>
+                        </a>
+                    </li>
+                    <li {% if documentation %} class="active" {% endif %} href="{% url 'broker:contract_documents' %}">
+                        <a href="{% url 'broker:contract_documents' %}">
+                            <i class="fas fa-file"></i><span>Documentation</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'accounts:logout' %}">
+                            <i class="fas fa-sign-out-alt"></i><span>Log Out</span>
+                        </a>
+                    </li>
+                   
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

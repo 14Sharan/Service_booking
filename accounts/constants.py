@@ -28,3 +28,13 @@ VERIFICATION_STATUS = (
 PENDING = 1
 VERIFIED = 2
 REJECTED = 3
+
+BOOKING_STATUS = (
+    (1, 'Pending'),
+    (2, 'Accepted'),
+    (3, 'Rejected'),
+)
+PENDING = 1
+ACCEPTED = 2
+REJECTED = 3
+

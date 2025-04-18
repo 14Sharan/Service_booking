@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-layout="vertical" data-sidebar="dark" data-sidebar-size="lg" data-preloader="disable"
+data-theme="default" data-topbar="light" data-bs-theme="light">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="POS - Bootstrap Admin Template">
+    <meta name="keywords"
+        content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern,  html5, responsive">
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Service Booking</title>
+    <link rel="shortcut icon" href="{% static 'admin-assets/images/favicon.ico' %}" />
+    <link href="{% static 'admin-assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/flash.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/loader.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/selectize.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/jquery.fancybox.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/intlTelInput.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    {% comment %} <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> {% endcomment %}
+
+
+    
+    
+</head>
+<body>
+    {% if messages %}
+    <div class="flash animate--drop-in-fade-out">
+        {% for message in messages %}
+        <div class="flash__icon">
+            <i class="icon fas fa-check-circle"></i>
+        </div>
+        <span class="flash__body">{{ message }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <script src="{% static 'admin-assets/js/moment.min.js' %}"></script>
+    <script>
+        function ConvertDateTime(createdate, createtime) {
+            var d = createdate + "T" + createtime + "Z";
+            const date = d;
+            const local = moment.utc(date).local().format("Do MMM YYYY hh:mm A");
+            return local;
+        }
+    </script>
+    
+    <div class="main-wrapper">
+        <div class="header">
+            <div class="header-left active d-flex align-items-center">
+                <a href="{% url 'accounts:index' %}" class="logo logo-normal w-100">
+                    <img src="{% static 'admin-assets/images/bro.png' %}" alt="img" style='height:115px !important'>
+                </a>
+                <a href="{% url 'accounts:index' %}" class="logo-collapse">
+                    <img src="{% static 'admin-assets/images/bro.png' %}" alt="img" >
+                </a>
+                <a id="toggle_btn" href="javascript:void(0);">
+                </a>
+            </div>
+            <a id="mobile_btn" class="mobile_btn" href="#sidebar">
+                <span class="bar-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </a>
+            <div class="header-title">
+                <div class="dashboard_bar">
+                    {% if head_title %}{{head_title}}{% else %}Dashboard{% endif %}
+                </div>
+            </div>
+            <ul class="nav user-menu">
+                <li>
+                    <a onclick="javascript:toggleFullScreen()" title="Toggle Full Screen">
+                        <i class="fas fa-expand full-screen mt-1"></i>
+                    </a>
+                </li>
+                <li class="nav-item dropdown notification-dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+                        <img src="{% static 'admin-assets/fonts/notification-bing.svg' %}" alt="img" class="bell-icon">
+                        <span class="badge rounded-pill">0</span>
+                    </a>
+                    <div class="dropdown-menu notifications">
+                        <div class="topnav-dropdown-header">
+                            <span class="notification-title">Notifications</span>
+                            <a href="javascript:void(0);" class="clear-noti"> Clear All </a>
+                           
+                        </div>
+                        <div class="noti-content">
+                            <ul class="notification-list">
+                                <!-- <li class="notification-message">
+                                    <a  href="javascript:void(0);">
+                                        <div class="media d-flex">
+                                            <span class="avatar flex-shrink-0">                                                
+                                                <img src="{% static 'admin-assets/images/dp.png' %}" />
+                                            </span>
+                                            <div class="media-body flex-grow-1">
+                                                <p class="noti-details">
+                                                    <span class="noti-title">This is notification</span>
+                                                </p>
+                                                <p class="noti-time"><span class="notification-time">12-07-2023</span>
+                                                    <i class="fas fa-check-double"></i>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li> -->
+                                <li class="notification-message">
+                                    <p class="pb-0 mb-0 no-notification" style="color: #9f8a8a;"> No New Notifications</p>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="topnav-dropdown-footer">
+                            <a href="">View all Notifications</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item dropdown has-arrow main-drop">
+                    <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
+                        <span class="user-img">
+                            {% if request.user.profile_pic %}
+                            <img src="{{request.user.profile_pic.url}}" alt="img" />
+                            {% else %}
+                            <img src="{% static 'admin-assets/images/dp.png' %}" alt="img" />
+                            {% endif %}
+                            <span class="status online"></span>
+                        </span>
+                    </a>
+                    <div class="dropdown-menu menu-drop-user">
+                        <div class="profilename">
+                            <div class="profileset">
+                                <span class="user-img">
+                                {% if request.user.profile_pic %}
+                                <img src="{{request.user.profile_pic.url}}" alt="img" />
+                                {% else %}
+                                <img src="{% static 'admin-assets/images/dp.png' %}" alt="img" />
+                                {% endif %}
+                                <span class="status online"></span></span>
+                                <div class="profilesets">
+                                    <h6>
+                                        {% if request.user.username %}
+                                        {{ request.user.username }}
+                                        {% else %}{{request.user.full_name|truncatechars:20}}{% endif %}
+                                    </h6>
+                                    <h5>
+                                        {% if request.user.role_id == 1 %}
+                                        SUPER ADMIN {% else %}ADMIN{% endif %}
+                                    </h5>
+                                </div>
+                            </div>
+                            <hr class="m-0">
+                            <a class="dropdown-item" href="{% url 'superuser:admin_profile' user.id %}"><i class="fas fa-user me-1 ms-1"></i>My Profile</a>
+                            <a class="dropdown-item" href=""><i class="fa fa-edit me-1 ms-1"></i>Update Profile</a>
+                            <a class="dropdown-item" href=""> <i class="fas fa-unlock-alt me-1 ms-1"></i> Change Password</a>
+                            <hr class="m-0">
+                            <a class="dropdown-item logout pb-0" href="{% url 'accounts:logout' %}"><img src="{% static 'admin-assets/fonts/log-out.svg' %}" class="me-2" alt="img">Logout</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="dropdown mobile-user-menu">
+                <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="">My Profile</a>
+                    <a class="dropdown-item" href="">Update Profile</a>
+                    <a class="dropdown-item" href="">Change Password</a>
+                    <a class="dropdown-item" href="">Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="slimScrollDiv">
+                <div class="sidebar-inner slimscroll">
+                    <div id="sidebar-menu" class="sidebar-menu">
+                        <ul>
+                            <li {% if not head_title or head_title == 'Dashboard' or head_title == 'Change Password' %} class="active" {% endif %}>
+                                <a href="{% url 'accounts:index' %}">
+                                    <i class="fas fa-home"></i><span> Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="submenu {% if head_title == 'Service Providers' or head_title == 'Users' %}active{% endif %}">
+                                <a href="javascript:void(0);"><i class="fas fa-users"></i><span> Users Management</span>
+                                    <span class="menu-arrow"></span></a>
+                                <ul>
+                                    <li>
+                                        <a {% if head_title == 'Service Providers' %} class="active" {% endif %} 
+                                        href="{% url 'superuser:service_providers_list' %}">Service Providers</a>
+                                    </li>
+                                    <li>
+                                        <a {% if head_title == 'Users' %} class="active" {% endif %} 
+                                        href="{% url 'superuser:users_list' %}">Users</a>
+                                    </li>
+                                  
+                                </ul>
+                            </li>
+                            <li {% if head_title == "Add Category" %} class="active" {% endif %}>
+                                <a href="{% url 'superuser:add_category' %}"><i class="fas fa-id-badge"></i><span>Category Management</span></a>
+                            </li>
+{% comment %}                       
+                            <li {% if head_title == "Support Chat" %} class="active" {% endif %}>
+                                <a href="{% url 'chat:chat_screen' %}"><i class="fas fa-headset"></i><span>Support Chat</span></a>
+                            </li>
+                          
+                            <li {% if head_title == "Property Queries Management" %} class="active" {% endif %}>
+                                <a href="{% url 'properties:property_query_list' %}"><i class="fas fa-building"></i><span>Property
+                                        Queries</span></a>
+                            </li>
+                            <li {% if head_title == "Metrices" %} class="active" {% endif %}>
+                                <a href="{% url 'accounts:metrices' %}"><i class="fas fa-id-badge"></i><span>Metrics</span></a>
+                            </li>
+                            <li {% if head_title == "Frontend Services" %} class="active" {% endif %}>
+                                <a href="{% url 'static_pages:our_services_list' %}"><i class="fas fa-headset"></i><span>Frontend Services</span></a>
+                            </li>
+                            <li {% if head_title == "Blogs Management" %} class="active" {% endif %}>
+                                <a href="{% url 'static_pages:blogs_list' %}"><i class="fas fa-blog"></i><span>Blogs</span></a>
+                            </li>
+                            <li {% if head_title == "User Testimonials" %} class="active" {% endif %}>
+                                <a href="{% url 'accounts:user_testimonials' %}"><i class="fa fa-quote-left"></i><span>Testimonials</span></a>
+                            </li> 
+                            <li class="submenu {% if head_title == 'Database Backup Management' or head_title == 'FAQ Management' or head_title == 'Login History' or head_title == 'Pages Management' or head_title == 'Notifications Management' or head_title == 'Help And Support Management' or head_title == 'Reason Management' %}active{% endif %}">
+                                <a href="javascript:void(0);"><i class="fas fa-users-cog"></i><span> Settings</span>
+                                    <span class="menu-arrow"></span></a>
+                                <ul>
+                                    <li>
+                                        <a {% if head_title == 'Landing Image' %} class="active" {% endif %} href="{% url 'accounts:landing_images' %}">
+                                            Landing Page Image
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a {% if head_title == 'Pages Management' %} class="active" {% endif %} href="{% url 'static_pages:pages_list' %}">
+                                            Pages
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a {% if head_title == 'Services' %} class="active" {% endif %} href="{% url 'static_pages:how_it_works_list' %}">
+                                            Our Services
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a {% if head_title == 'FAQ Management' %} class="active" {% endif %} href="{% url 'static_pages:faq_list' %}">
+                                            FAQ
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a {% if head_title == 'Database Backup Management' %} class="active" {% endif %} href="{% url 'backup:backup' %}">
+                                            Backup
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a {% if head_title == 'Login History Management' %} class="active" {% endif %} href="{% url 'accounts:login_history' %}">
+                                            Login History 
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a {% if head_title == 'Notifications Management' %} class="active" {% endif %} 
+                                        href="{% url 'accounts:notifications_list' request.user.id %}">
+                                            Notifications
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a {% if head_title == 'Reason Management' %} class="active" {% endif %} 
+                                        href="{% url 'accounts:accounts_reasons' %}">
+                                            Reasons
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="submenu {% if head_title == 'Website Error Logs Management' or head_title == 'Email Logs Management' %}active{% endif %}">
+                                <a href="javascript:void(0);"><i class="fas fa-exclamation-circle"></i><span> Logger</span>
+                                    <span class="menu-arrow"></span></a>
+                                <ul>
+                                    <li>
+                                        <a {% if head_title == 'Email Logs Management' %} class="active" {% endif %} href="{% url 'logger:email_logs_list' %}">Email Logs</a>
+                                    </li>
+                                    <li>
+                                        <a {% if head_title == 'Website Error Logs Management' %} class="active" {% endif %} href="{% url 'logger:error_logs_list' %}">Website Logs</a>
+                                    </li>
+                                </ul>
+                            </li> {% endcomment %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+

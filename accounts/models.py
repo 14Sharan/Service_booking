@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from accounts.constants import *
-
+from datetime import datetime
 class User(AbstractUser):
     username = models.CharField(max_length=255, null=True, blank=True, unique=True)
     full_name = models.CharField(max_length=255, null=True, blank=True)
@@ -11,6 +11,7 @@ class User(AbstractUser):
     mobile_no = models.CharField(max_length=255, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
     city = models.CharField(max_length=255, null=True, blank=True)
+    state = models.CharField(max_length=255, null=True, blank=True)
     country = models.CharField(max_length=255, null=True, blank=True)
     postal_code = models.CharField(max_length=255, null=True, blank=True)
     profile_pic = models.FileField(upload_to='profile', null=True, blank=True)
@@ -31,8 +32,9 @@ class User(AbstractUser):
 class ServiceProviderInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="service_provider_info")
     verification_status = models.PositiveIntegerField(default=1, choices=VERIFICATION_STATUS)
-    verified_on = models.DateTimeField(null=True, blank=True)
+    verified_on = models.DateTimeField(default=datetime.now)
     rejection_reason = models.TextField(null=True, blank=True)
+    break_status = models.PositiveIntegerField(default=False)
     document_type = models.PositiveIntegerField(choices=DOCUMENT_TYPES)  # Remove blank=True
     document_file = models.FileField(upload_to='verification_documents') 
     uploaded_on = models.DateTimeField(auto_now_add=True)

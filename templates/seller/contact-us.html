@@ -1,0 +1,277 @@
+{% include 'seller/includes/header.html' %}
+{% load static %}
+{% load extras %}
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'seller/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'seller:seller_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Contact Us</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12 mx-auto">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between">
+                                    <h4 class="card-title">Contact Us</h4>
+                                </div>
+                         
+                                <div class="card-body">
+                                    <div class="sidebar-widget my-properties ">
+                                        <div class="blog-single-area py-5">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <section class="contact-sec py-5">
+                                                        <div class="container">
+                                                            <div class="row pt-45 justify-content-center">
+                                                                <div class="col-lg-4 col-12">
+                                                                    <div class="contact-info-item">
+                                                                        <i class="far fa-map-marker-plus contact-info-bg"></i>
+                                                                        <h3>Address</h3>
+                                                                        <p>{% if contact_details.address %}{{contact_details.address}}{% else %}--{% endif %}</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-4 col-12">
+                                                                    <div class="contact-info-item">
+                                                                        <i class="far fa-phone-alt contact-info-bg2"></i>
+                                                                        <h3>Call Us</h3>
+                                                                        <p>
+                                                                            {% for mobile_no in mobile_nos %}
+                                                                            {{mobile_no.country_code}} {{mobile_no.mobile_no}}<br>
+                                                    
+                                                                            {% comment %}
+                                                                            {% if contact_details.mobile_no %}
+                                                                            <a href="tel:{% if contact_details.country_code %}{{contact_details.country_code}}{% endif %}{{contact_details.mobile_no}}">
+                                                                                {% if contact_details.country_code %}{{contact_details.country_code}}{% endif %}{{contact_details.mobile_no}}
+                                                                            </a>
+                                                                            {% else %}--{% endif %}
+                                                                            {% endcomment %}
+                                                                        {% endfor %}</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-4 col-12">
+                                                                    <div class="contact-info-item">
+                                                                        <i class="far fa-envelope contact-info-bg3"></i>
+                                                                        <h3>Email</h3>
+                                                                        <p>{% if contact_details.email %}{{contact_details.email}}{% else %}--{% endif %}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                    <section class="contact-area pt-100 pb-70">
+                                                        <div class="container">
+                                                            <div class="contact-form">
+                                                                <h3>Leave A Message</h3>
+                                                                <form onsubmit="Loader(this.id)" id="contactForm" action="{% url 'seller:contact_us' %}" method="POST" enctype="multipart/form-data">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-6">
+                                                                            <div class="form-group mb-3">
+                                                                                <label>Your Name</label>
+                                                                                <input type="text" name="full_name" id="name" class="form-control" maxlength="30" placeholder="Please enter your name">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-6">
+                                                                            <div class="form-group mb-3">
+                                                                                <label>Your Email</label>
+                                                                                <input type="email" name="email" id="email" class="form-control" maxlength="50" placeholder="Please enter your email address">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-6">
+                                                                            <div class="form-group mb-3">
+                                                                                <label>Phone Number</label>
+                                                                                <div class="">
+                                                                                    <input id="country_code" type="hidden" name="country_code" value = "ng" class="form-control" maxlength="20">
+                                                                                    <input type="hidden" value = "+234" name="country_iso_code" id="country_iso_code" class="form-control"  maxlength="10">
+                                                                                    <input id="mobile_no" type="text" onkeypress="return /[0-9]/i.test(event.key)" placeholder="Please enter your phone number" name="mobile_no" class="form-control" maxlength="20">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-6">
+                                                                            <div class="form-group mb-3">
+                                                                                <label>Your Subject</label>
+                                                                                <input type="text" name="subject" id="subject" class="form-control" maxlength="255" placeholder="Please enter your subject">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-12 col-md-12">
+                                                                            <div class="form-group mb-3">
+                                                                                <label>Your Message</label>
+                                                                                <textarea name="message" class="form-control" id="message" cols="30" rows="5" placeholder="Please enter your message"></textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-12 col-md-12">
+                                                                            <div class="agree-label d-flex align-items-center">
+                                                                                <input class="me-2" id="terms_agreed" type="checkbox" name="terms_agreed">
+                                                                                <label for="chb1">
+                                                                                    Accept <a href="{% url 'seller:terms_and_conditions' %}">Terms &amp; Conditions</a> And <a href="{% url 'seller:privacy_policy' %}">Privacy Policy.</a>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-12 col-md-12">
+                                                                            <div class="text-end">
+                                                                            <button type="submit" class="theme-btn">
+                                                                                Send Message <i class="far fa-comment-alt-smile ms-1 align-middle"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+
+
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% if contact_details.address %}
+<section class="map-card">
+    <div class="container-fluid mb-3">
+        <div id="map-canvas" class="stop-map"></div>
+    </div>
+</section>
+{% endif %}
+{% include 'seller/includes/footer.html' %}
+{% if contact_details.address %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_PLACES_KEY}}&libraries=places&callback="></script>
+<script>
+    var directionsDisplay;
+    var directionsService = new google.maps.DirectionsService();
+    var map;
+
+    function initialize() {
+        directionsDisplay = new google.maps.DirectionsRenderer();
+        var coordinates = new google.maps.LatLng({{contact_details.latitude}},{{contact_details.longitude}} );
+        var mapOptions = {
+            zoom: 15,
+            center: coordinates 
+        }
+        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        directionsDisplay.setMap(map);
+        var marker = new google.maps.Marker({
+            position: coordinates,
+            map: map,
+            title: '{{charging_site.address}}'
+        });
+        var infowindow = new google.maps.InfoWindow();
+        google.maps.event.addListener(marker, 'click', (function(marker) {
+            return function() {
+                infowindow.setContent('<p class="stop-markerinfo">{{contact_details.address}}</p>');
+                infowindow.open(map, marker);
+            }
+        })(marker));
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+{% endif %}
+<script src="{% static 'admin-assets/js/intlTelInput-jquery.min.js' %}"></script>
+<script type="text/javascript">
+    $("#contactForm").validate({
+        rules: {
+            full_name: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            },
+            email: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                email: true,
+            },
+            mobile_no: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                number: true,
+                minlength: 8,
+                maxlength: 15,
+            },
+            subject: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            },
+            message: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            },
+            terms_agreed: {
+                required: true
+            },
+        },
+        messages: {
+            full_name: {
+                required: "Please enter your name",
+            },
+            email: {
+                required: "Please enter your email address",
+            },
+            mobile_no: {
+                required: "Please enter your phone number",
+                minlength: "Mobile number should be at least 8 digits",
+                maxlength: "Mobile number should not be more than 15 digits",
+            },
+            subject: {
+                required: "Please enter subject",
+            },
+            message: {
+                required: "Please enter message",
+            },
+            terms_agreed: {
+                required: "Please accept our terms and conditions"
+            },
+        },
+        errorPlacement: function (error, element) {
+            if (element.attr("name") == "terms_agreed") {
+                error.insertAfter(".agree-label");
+            }
+            else {
+                error.insertAfter(element);
+            }
+        },
+    });    
+
+    // For country code picker intlTelInputGlobals
+    $("#mobile_no").intlTelInput({
+        initialCountry: "ng",
+        separateDialCode: true,
+        geoIpLookup: function(callback) {
+            fetch("https://ipapi.co/json").then(function(res){ 
+                return res.json(); 
+            }).then(function(data) { 
+                callback(data.country_code); 
+                $('#country_code').val(data.country_code)
+                $('#country_iso_code').val(data.country_calling_code)
+            }).catch(function() { 
+                callback("in"); 
+                $('#country_code').val('ng')
+                $('#country_iso_code').val('+234')
+            });
+        }
+    }).on('countrychange', function (e, countryData) {
+        $('#country_code').val($('.iti__selected-dial-code').text())
+        $('#country_iso_code').val($("#mobile_no").intlTelInput("getSelectedCountryData").iso2)
+    });
+</script>

@@ -1,0 +1,290 @@
+{% include "admin-includes/header.html" %}{% load static %}{% load extras %}
+
+<style>
+   .product-img .bi.bi-camera-video-fill {
+    background: #02a9ee;
+    color: #fff;
+    width: 25px;
+    border-radius: 4px;
+    padding-left: 6px;
+}
+</style>
+
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <h4>Property Information</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'frontend:index' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a class="white-text" href="{% url 'properties:properties_list' %}">Properties</a></li>
+                        <li class="breadcrumb-item active">Profile</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="page-btn d-flex flex-wrap">
+                {% if not property.is_verified %}
+                    <a href="{% url 'properties:verify_property' property.id %}" class="btn btn-primary me-2">Verify</a>
+                {% endif %}
+                <a class="btn btn-info shadow btn-xs sharp me-2" href="{% url 'properties:update_property' property.id %}"><i class="fa fa-edit"></i></a>
+                <a href="{% url 'properties:publish_unpublish_property' property.id %}" class="btn btn-primary me-2">{% if property.is_active %}UnPublish{% else %}Publish{% endif %}</a>
+                <a class="btn btn-secondary" href="{% url 'properties:properties_list' %}" ><i class="fa fa-angle-left me-1"></i> Back</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mt-3">
+                <div class="card product-profile-wrapper ">
+                    <div class="product-detail-wrapper">
+                        <div class="swiper swiper-container">
+                            <div class="swiper-wrapper">
+                                {% if property.property_images.all %}
+                                {% for image in property.property_images.all %}
+                                <div class="swiper-slide">
+                                    <div class="profile-imgbox ">
+                                            <a class="product-img" href="{{image.image.url}}" data-fancybox="gallery">
+                                                <img style="height: auto;" src="{{image.image.url}}" alt="image">
+                                            </a>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 productdetails">
+                                <ul class="product-bar">
+                               
+                                    <li>
+                                        <h4>Name </h4>
+                                        <h6>{% if property.name %}{{property.name}}{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    
+                                    <li>
+                                        <h4>Category </h4>
+                                        <h6>{% if property.category %}{{property.category.category}}{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Address </h4>
+                                        <h6>{% if property.address %}<b>{{property.address}} ({{property.latitude}}, {{property.longitude}}) </b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Postal Code </h4>
+                                        <h6>{% if property.postal_code %}<b>{{property.postal_code}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Price </h4>
+                                        <h6>{% if property.cost %}<b>$ {{property.cost}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Total Commission Percentage</h4>
+                                        <h6><b>{{property.admin_commission_percentage}} %</b></h6>
+                                    </li>
+                                    <li>
+                                        <h4>Total Commission Price </h4>
+                                        <h6><b>$ {{property.admin_commission_price|floatformat:"2g"}}</b></h6>
+                                    </li>
+                                    {% if property.broker_commission_percentage %}
+                                    <li>
+                                        <h4>Broker Commission Percentage</h4>
+                                        <h6><b>{{property.broker_commission_percentage}} %</b></h6>
+                                    </li>
+                                    <li>
+                                        <h4>Broker Commission Price </h4>
+                                        <h6>{% if property.broker_commission_price %}<b>$ {{property.broker_commission_price|floatformat:"2g"}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    {% endif %}
+                                    {% if property.seller_commission_percentage %}
+                                    <li>
+                                        <h4>Seller Commission Percentage</h4>
+                                        <h6><b>{{property.seller_commission_percentage}} %</b></h6>
+                                    </li>
+                                    <li>
+                                        <h4>Seller Commission Price </h4>
+                                        <h6>{% if property.seller_commission_price %}<b>$ {{property.seller_commission_price|floatformat:"2g"}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    {% endif %}
+                                    <li>
+                                        <h4>Total Price </h4>
+                                        <h6>{% if property.final_amount %}<b>$ {{property.final_amount|floatformat:"2g"}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Property Type </h4>
+                                        <h6>
+                                            <span class="badge bg-primary">
+                                            {% if property.property_for == 1 %}SALE
+                                            {% elif property.property_for == 2 %}RENT
+                                            {% endif %}
+                                            </span>
+                                        </h6>
+                                    </li>
+                                    {% if property.property_video %}
+                                    <li>
+                                        <h4>Property Video</h4>
+                                        <h6 class="{% if property.property_video %}d-flex{% endif %}">
+                                            <a class="product-img d-flex align-items-center" href="{{ property.property_video.url }}" data-fancybox="gallery">
+                                                    <i class="fas fa-video"></i> &nbsp;&nbsp;
+                                                    Click To See Video
+                                            </a>
+                                        </h6>
+                                    </li>
+                                    {% endif %}
+
+                                    <li>
+                                        <h4>
+                                            {% if property.amenties.all.count == 1%}
+                                            Amenity
+                                            {% elif property.amenties.all.count > 1%}
+                                            Amenities
+                                            {% endif %}
+                                        </h4>
+                                        <h6>
+                                            {% if property.amenties.all %}
+                                                {% for data in property.amenties.all %}
+                                                    <li>
+                                                        <b>{{data.title}}</b>
+                                                    </li>
+                                                {% endfor %}
+                                                {% endif %}
+                                        </h6>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6 productdetails">
+                                <ul class="product-bar">
+                                    <li>
+                                        <h4>No of Bedrooms</h4>
+                                        <h6>{% if property.bedrooms %}<b>{{property.bedrooms}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>No of Bathrooms</h4>
+                                        <h6>{% if property.bathrooms %}<b>{{property.bathrooms}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>No of Garages</h4>
+                                        <h6>{% if property.garages %}<b>{{property.garages}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Size</h4>
+                                        <h6>{% if property.size %}<b>{{property.size}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    {% if property.available_from %}
+                                    <li>
+                                        <h4>Available From</h4>
+                                        <h6>{% if property.available_from %}<b>{{property.available_from|date:'Y-m-d'}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Available To</h4>
+                                        <h6>{% if property.available_to %}<b>{{property.available_to|date:'Y-m-d'}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    {% endif %}
+                                    <li>
+                                        <h4>State</h4>
+                                        <h6>
+                                            {% if property.is_active %}
+                                            <span class="badge bg-info">PUBLISH</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">UNPUBLISH</span>
+                                            {% endif %}
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h4>Created On </h4>
+                                        <h6>
+                                            <script>
+                                                var date = ConvertDateTime("{{ property.created_on|date:'Y-m-d' }}", "{{ property.created_on|time:'H:i' }}");
+                                                document.write(date);
+                                            </script>
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h4>Updated On </h4>
+                                        <h6>
+                                            <script>
+                                                var date = ConvertDateTime("{{ property.updated_on|date:'Y-m-d' }}", "{{ property.updated_on|time:'H:i' }}");
+                                                document.write(date);
+                                            </script>
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h4>Created By</h4>
+                                        <h6>
+                                           <a {% if property.broker %}href="{% url 'users:view_user' property.broker.id %}"
+                                           {% elif property.seller %}
+                                           href="{% url 'users:view_user' property.seller.id %}"
+                                           {% endif %} 
+                                           >{% if property.broker %}
+                                                    {% if property.broker.first_name  %}
+                                                    {{property.broker.first_name}}
+                                                    {% else %}
+                                                    {{property.broker.email}}
+                                                    {% endif %}
+                                                {% elif property.seller %}
+                                                    {% if property.seller.first_name  %}
+                                                    {{property.seller.first_name}}
+                                                    {% else %}
+                                                    {{property.seller.email}}
+                                                    {% endif %}
+                                            {% endif %}</a>
+                                        </h6>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "admin-includes/footer.html" %}
+
+<script>
+
+/* 1 of 2 : FancyBox */
+$().fancybox({
+
+});
+
+/* 2 of 2 : Swiper */
+const mySwiper = new Swiper(".swiper-container", {
+  loop: true,
+  autoplay: 1000,
+  speed: 500,
+  slidesPerView: 1,
+  spaceBetween: 27,
+  centeredSlides: true,
+  pagination: {
+    el: ".swiper-pagination",
+    clickable: true
+  },
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev"
+  }
+});
+
+
+$("[data-fancybox]").fancybox({
+  beforeClose: function( instance, slide ) {
+    // Tip: Each event passes useful information within the event object:
+
+    // Object containing references to interface elements
+    // (background, buttons, caption, etc)
+    // console.info( instance.$refs );
+
+    // Current slide options
+    // console.info( slide.opts );
+
+    // Clicked element
+    // console.info( slide.opts.$orig );
+
+    // Reference to DOM element of the slide
+    // console.info( slide.$slide );
+
+  }
+});
+</script>

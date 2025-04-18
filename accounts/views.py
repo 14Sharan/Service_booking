@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import logout,login
 from django.db.models import Q
 from django.http import JsonResponse
+from django.contrib import messages
 
 
 def index(request):
@@ -14,21 +15,20 @@ def index(request):
 
 def LoginView(request):
     if request.method == "POST":
-        username = request.POST.get('username')
+        username = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(username=username,password=password)
-        if user.is_superuser:
+        if user:
             login(request,user)
             return redirect('accounts:index')
-        elif not user.is_superuser:
-            login(request,user)
-            return redirect('accounts:signup')
-        return render(request,"registration/signin.html")
-    return render(request,"registration/signin.html")
+        else:
+            messages.error(request,"Invalid credentials")
+            return redirect('accounts:login')
+    return render(request,"registration/login.html")
 
 def LogOut(request):
     logout(request)
-    return redirect("accounts:signup")
+    return render(request,"registration/login.html")
 
 
 """

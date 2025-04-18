@@ -1,0 +1,33 @@
+{% load static %}
+{% include 'registration/includes/header.html' %}
+<form class="theme-form" onsubmit="Loader(this.id)" id="login" method="POST">
+    <h4 class="text-center">Forgot Your Password</h4>
+    <p class="text-center">Don’t worry! it happens. Please enter the email address associated with your account.</p>
+    <div class="form-group mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email" placeholder="Enter your email address">
+    </div>
+    <div class="text-end mt-3">
+        <button type="submit" class="btn login-btn btn-block w-100">Send Mail</button>
+    </div>
+    <p class="signup-link mt-4 mb-0 text-center">Already have an account?<a class="ms-2" href="{% url 'accounts:login' %}">Sign In</a></p>
+</form>
+{% include 'registration/includes/footer.html' %}
+<script type="text/javascript">
+    $("#login").validate({
+        rules: {
+            email: {
+                required: true,
+                email: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            },
+        },
+        messages: {
+            email: {
+                required: "Please enter email address",
+            },
+        }
+    });
+</script>

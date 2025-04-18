@@ -1,0 +1,582 @@
+{% include 'seller/includes/header.html' %}
+{% load static %}
+
+
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'seller/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'seller:seller_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Add Property</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form class="custom-form" id="add-property" method='POST'
+                                onsubmit="return CheckAddress(this.id)" enctype="multipart/form-data">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Property Description And Price</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="sidebar-widget property-form-group">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Property Name</label>
+                                                        <input type="text" name="name" id="name" maxlength='55' onchange = "checkproperty()"
+                                                            class="form-control" placeholder="Enter Property Name">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label>Address</label>
+                                                        <input type="text" placeholder="Enter Address" maxlength="500"  onchange = "checkproperty()"
+                                                            name="address" id="address" class="form-control">
+                                                        <input type="hidden" name="latitude" id="latitude">
+                                                        <input type="hidden" name="longitude" id="longitude">
+                                                        <span class="add-property-error error"></span>
+                                                    </div>
+                                                </div>
+                                                <span id = "property_error" class = "error"></span>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Property Price ($)</label>
+                                                        <input type="text" name="cost" id="cost" maxlength='15'
+                                                            onkeypress="return /[0-9]/i.test(event.key)"
+                                                            class="form-control" placeholder="Enter Price">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Property Type</label>
+                                                        <select class="form-control form-select" name='category'
+                                                            id='category' placeholder="Select Proerty type">
+                                                            <option value=''>select property type</option>
+                                                            {% for i in category %}
+                                                            <option value='{{i.id}}'>{{i.category}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Property For</label>
+                                                        <select class="form-control form-select" name='property_for'
+                                                            id='property_for' placeholder="Select Proerty For">
+                                                            <option value=''>select</option>
+                                                            <option value='1'>Sale</option>
+                                                            <option value='2'>Rent</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="property_video">Upload video</label>
+                                                        <input type="file" name="property_video" id="property_video"
+                                                            class="form-control">
+                                                        <span id="video_error" class="error"></span>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Postal Code</label>
+                                                        <input type="text" name="postal_code" maxlength='10'
+                                                            onkeypress="return /[0-9]/i.test(event.key)"
+                                                            class="form-control" placeholder="Ente Postal Code">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6" style = "display:none" id = "start_div">
+                                                    <div class="form-group">
+                                                        <label>Available From</label>
+                                                        <input type="date" id = "start_date" name="available_from"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6" style = "display:none" id = "end_div">
+                                                    <div class="form-group">
+                                                        <label>Available To</label>
+                                                        <input type="date" id = "end_date" name="available_to"
+                                                            class="form-control">
+                                                            <p style = "color:red" id ="end_error"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 div_description">
+                                                    <div class="form-group">
+                                                        <label>Property Description</label>
+                                                        <textarea id='content' class="form-control"
+                                                            name="description"> </textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card mb-4 ">
+                                    <div class="card-body p-0">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Add Images</h4>
+                                        </div>
+                                        <div class="sidebar-widget property-form-group px-4 div_images">
+                                            <div class="upload-images">
+                                                <input type="file" name='property_images' id='property_images' multiple>
+                                                <span><i class="fa fa-cloud-upload"></i> Click here or drop files to
+                                                    upload</span>
+                                            </div>
+                                        </div>
+                                        <div class="img-thumbs-hidden" id="img-preview">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Property Features</h4>
+                                        </div>
+                                        <div class="sidebar-widget property-form-group px-4">
+                                            <div class="row m-0 customfield">
+                                                <div class="col-md-12 col-xl-4 col-lg-12">
+                                                    <div class="row m-0 customfield">
+                                                        <div class="col-md-7 col-xl-7 p-0">
+                                                            <div class="form-group">
+                                                                <label>Property Size</label>
+                                                                <input class="form-control" name='property_size'
+                                                                    type="text" maxlength='10'
+                                                                    onkeypress="return /[0-9]/i.test(event.key)"
+                                                                    placeholder="Enter Property Size" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-5 col-xl-5 p-0">
+                                                            <div class="form-group ">
+                                                                <label>Unit</label>
+                                                                <select class="form-control form-select" name='unit'
+                                                                    id='unit'>
+                                                                    <option value=''>select</option>
+                                                                    <option value='1'>square feet</option>
+                                                                    <option value='2'>square meter</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 col-xl-8 col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-xl-4">
+                                                            <div class="form-group">
+                                                                <label>Number Of Bedrooms</label>
+                                                                <input class="form-control" maxlength='3'
+                                                                    name='bedrooms' type="text"
+                                                                    onkeypress="return /[0-9]/i.test(event.key)"
+                                                                    placeholder="Enter Number of Bedrooms" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-xl-4">
+                                                            <div class="form-group">
+                                                                <label>Number Of Bathrooms</label>
+                                                                <input class="form-control" maxlength='2'
+                                                                    name='bathrooms' type="text"
+                                                                    onkeypress="return /[0-9]/i.test(event.key)"
+                                                                    placeholder="Enter Number of Bathrooms" />
+                                                            </div>
+                                                        </div>
+                                                        <div class=" col-md-6 col-xl-4">
+                                                            <div class="form-group">
+                                                                <label>Number Of Garages</label>
+                                                                <input class="form-control" maxlength='2' name='garages'
+                                                                    type="text"
+                                                                    onkeypress="return /[0-9]/i.test(event.key)"
+                                                                    placeholder="Enter Number of Garages" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if amenties %}
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="card-header">
+                                                    <h4 class="card-title">Property Amenities</h4>
+                                                </div>
+                                                <div class="catgory-check-card checkbox-list-scroll d-flex">
+                                                
+                                                    {% for amenty in amenties %}
+                                                    <div class="checkbox-animate">
+                                                        <label>
+                                                            <input type="checkbox" {% if amenty in property.amenties.all %}checked{% endif %} name="amenties" value="{{amenty.id}}">
+                                                            <span class="input-check"></span>
+                                                            <span>{{amenty.title}}</span>
+                                                        </label>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        <div class="col-md-12 text-end mt-5">
+                                            <button type="submit" class="btn theme-btn">
+                                                Save
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'seller/includes/footer.html' %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_PLACES_KEY}}&libraries=places&callback=CheckAddress"
+    async defer></script>
+<script>
+    CKEDITOR.replace('content',{
+        disallowedContent: 'img'
+    });
+</script>
+
+<script>
+    {% comment %} if ($('textarea').val()) {
+        $('textarea').val($('textarea').val().trim())
+    }
+    $("#address").keyup(function () {
+        
+        var autocomplete = new google.maps.places.Autocomplete($("#address")[0], {});
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var place = autocomplete.getPlace();
+            $('#latitude').val(place.geometry.location.lat())
+            $('#longitude').val(place.geometry.location.lng())
+        });
+    });
+    $('#address').change(function () {
+        $('.add-property-error ').text("");
+    })
+    $('#address').on('keypress', function (e) {
+        return e.which !== 13;
+    });
+    function CheckAddress(formID) {
+        if ($('#' + formID).length) {
+            if ($('#' + formID).valid()) {
+                if ($('#latitude').val() == "" && $('#longitude').val() == "") {
+                    $('.' + formID + '-error').text("Please enter a valid location")
+                    return false;
+                }
+                else {
+                    $('.' + formID + '-error').text("")
+                    Loader(formID);
+                    return true;
+                }
+            }
+        }
+    } {% endcomment %}
+    $("#add-property").validate({
+        ignore: [],
+        rules: {
+            name: {
+                required: true,
+                // ckspecial: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                minlength: 3,
+                maxlength: 55,
+            },
+            cost: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                min: 1,
+                max: 1000000000,
+            },
+            category: {
+                required: true,
+
+            },
+            property_for: {
+                required: true,
+            },
+            address: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+            },
+            postal_code: {
+                required: true,
+                minlength: 5,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+            },
+            lease_document: {
+                accept: "pdf"
+            },
+            description: {
+                required: function (textarea) {
+                    CKEDITOR.instances[textarea.id].updateElement();
+                    var editorcontent = textarea.value.replace(/]*>/gi, '');
+                    return editorcontent.length === 0;
+                }
+            },
+            property_images: {
+                required: true,
+                accept: "jpg,png,jpeg,gif,svg"
+            },
+            property_video: {
+                accept: "mp4"
+            },
+            available_from: {
+                required: function(value){
+                    if($('#start_div').attr('style').includes('none')){
+                        return false
+                    }else{
+                        return true
+                    }
+                },
+            },
+            available_to: {
+                required: function(value){
+                    if($('#end_div').attr('style').includes('none')){
+                        return false
+                    }else{
+                        return true
+                    }
+                },
+            },
+            property_size: {
+                required: true,
+                min: 1,
+            },
+            unit: {
+                required: true,
+            },
+            bedrooms: {
+                required: true,
+                min: 1,
+            },
+            bathrooms: {
+                required: true,
+                min: 1,
+            },
+            garages: {
+                required: true,
+                min: 1,
+            },
+        },
+        messages: {
+            name: {
+                required: "Please enter property name",
+                minlength: "property name should be at least 3 characters",
+                maxlength: "property name should not be more than 55 characters",
+                // ckspecial: "No Special Charaters allowed except [, . - _ / ']"
+            },
+            cost: {
+                required: "Please enter property price",
+                min: "Please enter amount greater than 0",
+                max: "Please enter amount lesser than $ 1 Billion"
+            },
+            category: {
+                required: "Please select type"
+            },
+            property_for: {
+                required: "Please select property for"
+            },
+            available_from: {
+                required: "Please select available from date"
+            },
+            available_to: {
+                required: "Please select available to date"
+            },
+            address: {
+                required: "Please enter address",
+            },
+            postal_code: {
+                required: "Please enter address",
+            },
+            lease_document: {
+                accept: "Please upload file in these format only (pdf)"
+            },
+            description: {
+                required: "Please enter description",
+            },
+            property_size: {
+                required: "Please enter property size",
+                min: "Please enter a value greater than 0"
+            },
+            unit: {
+                required: "Select unit",
+            },
+            bedrooms: {
+                required: "Please enter bedrooms",
+                min: "Please enter a value greater than 0"
+            },
+            bathrooms: {
+                required: "Please enter bathrooms",
+                min: "Please enter a value greater than 0"
+            },
+            garages: {
+                required: "Please enter garages",
+                min: "Please enter a value greater than 0"
+            },
+
+            property_images: {
+                required: "Please select images",
+                accept: "Please upload file in these format only (jpg, jpeg, png, gif,svg)"
+            },
+            property_video: {
+                accept: "Please upload file in mp4 format only"
+            }
+        },
+        errorPlacement: function (error, element) {
+            if (element.attr("name") == "property_images") {
+                error.insertAfter(".div_images");
+            }
+            else if (element.attr("name") == "description") {
+                error.insertAfter(".div_description");
+            }
+            else {
+                error.insertAfter(element);
+            }
+        },
+    });
+    const property_images = new DataTransfer();
+    var imgUpload = document.getElementById('property_images')
+        , imgPreview = document.getElementById('img-preview')
+        , imgUploadForm = document.getElementById('form-upload')
+        , totalFiles
+        , previewTitle
+        , previewTitleText
+        , image_position
+        , clickfunction
+        , img;
+    imgUpload.addEventListener('change', previewImgs, true);
+    function previewImgs(event) {
+        // to remove all images first 
+        $('.new-added').remove()
+        property_images.clearData()
+        totalFiles = imgUpload.files.length;
+        if (!!totalFiles) {
+            imgPreview.classList.remove('img-thumbs-hidden');
+        }
+        for (var i = 0; i < totalFiles; i++) {
+            wrapper = document.createElement('div');
+            wrapper.classList.add('wrapper-thumb');
+            wrapper.classList.add('new-added');
+            removeBtn = document.createElement("span");
+            nodeRemove = document.createTextNode('x');
+            removeBtn.classList.add('remove-btn');
+            removeBtn.appendChild(nodeRemove);
+            img = document.createElement('img');
+            img.src = URL.createObjectURL(event.target.files[i]);
+            // add to file
+            property_images.items.add(event.target.files[i]);
+            image_name = document.createAttribute("image-name");
+            image_name.value = event.target.files[i].name
+            clickfunction = document.createAttribute("onclick");
+            clickfunction.value = "RemoveFile(this,'current')";
+            removeBtn.setAttributeNode(clickfunction);
+            // add to file end
+            removeBtn.setAttributeNode(image_name);
+            img.classList.add('img-preview-thumb');
+            if (event.target.files[i].type == 'image/jpg' || event.target.files[i].type == 'image/png' || event.target.files[i].type == 'image/jpeg' || event.target.files[i].type == 'image/gif' || event.target.files[i].type == 'image/svg') {
+                wrapper.appendChild(img);
+                wrapper.appendChild(removeBtn);
+                imgPreview.appendChild(wrapper);
+            }
+        }
+    }
+    // remove image and file
+    function RemoveFile(object, state) {
+        $(object).parent('.wrapper-thumb').remove();
+        let remainhtml = $('#img-preview').html().trim()
+        if (state == 'current') {
+            for (let i = 0; i < property_images.files.length; i++) {
+                if (property_images.files[i].name == $(object).attr('image-name')) {
+                    property_images.items.remove(i)
+                }
+            }
+            imgUpload.files = property_images.files;
+        }
+        if (!remainhtml) {
+            $('#img-preview').html('');
+            $('#img-preview').addClass('img-thumbs-hidden');
+        }
+    }
+
+    $('#property_video').bind('change', function () {
+        let size = this.files[0].size
+        if (size > 20000000) {
+            $("#video_error").html('File size must be less than 20 mb')
+            $(".btn").prop("disabled", true)
+        }
+        else {
+            $("#video_error").html('')
+            $(".btn").prop("disabled", false)
+        }
+
+    });
+        $(function(){
+            var dtToday = new Date();
+         
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear();
+            if(month < 10)
+                month = '0' + month.toString();
+            if(day < 10)
+                day = '0' + day.toString();
+            var maxDate = year + '-' + month + '-' + day;
+            $('#start_date').attr('min', maxDate);
+        });
+
+
+        $("#end_date").change(function(){
+            let start_date = $("#start_date").val()
+            let end_date = $("#end_date").val()
+            if(end_date <= start_date){
+                $("#end_error").html("End date must be greater than start date")
+                $(".btn").prop("disabled",true)
+            }else{
+                $("#end_error").html("")
+                $(".btn").prop("disabled",false)
+            }
+
+        })
+        $("#start_date").change(function(){
+            let start_date = $("#start_date").val()
+            let end_date = $("#end_date").val()
+            if(end_date <= start_date && end_date!= ""){
+                $("#end_error").html("End date must be greater than start date")
+                $(".btn").prop("disabled",true)
+            }else{
+                $("#end_error").html("")
+                $(".btn").prop("disabled",false)
+            }
+
+        })
+
+        $("#property_for").on("change",function(){
+            let val = $("#property_for").val()
+            if(val == 2){
+                $("#start_div").attr("style","display:block;")
+                $("#end_div").attr("style","display:block;")
+            }else{
+                $("#start_div").attr("style","display:none;")
+                $("#end_div").attr("style","display:none;")
+            }
+            
+        })
+</script>

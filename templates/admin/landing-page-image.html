@@ -1,0 +1,364 @@
+{% include 'admin-includes/header.html' %}
+{% load static %}{% load extras %}
+<link rel="stylesheet" href=" https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+{% comment %} <script src="{% static 'admin-assets/css/cropper.min.css' %}"></script> {% endcomment %}
+
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a class="white-text" href="{% url 'accounts:landing_images' %}">Landing Page Image</a>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+				<div class="card-title mb-0">
+					Landing Page Image
+				</div>
+                <div class="page-btn">
+                    {% if images|length < 3  %}
+                    <a data-bs-toggle="modal" data-bs-target="#add_category" class="btn btn-primary" href=""><i class="fas fa-plus me-1"></i> Add Image</a>
+                    {% endif %}
+                </div>
+			</div>
+            <div class="card-body">
+                <div class="dataview">
+                    <form onsubmit="Loader()" action="{% url 'properties:property_category' %}" method="GET">
+                        <div class="table-responsive">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Created On</th>
+                                        <th>Updated On</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if images %}
+                                    {% for image in images %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center display-images">
+                                                {% if image.image %}
+                                                <a href="{{image.image.url}}" data-fancybox>
+                                                    <img src="{{image.image.url}}" class="rounded-lg me-2" width="24" alt="img">
+                                                </a>
+                                                {% else %}
+                                                <a href="{% static 'admin-assets/images/dp.png' %}" data-fancybox>
+                                                    <img src="{% static 'admin-assets/images/dp.png' %}"
+                                                    class="rounded-lg me-2" width="24" alt="img">
+                                                </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <script>
+                                                var d = ConvertDateTime("{{ image.created_on|date:'Y-m-d' }}", "{{ image.created_on|time:'H:i' }}");
+                                                document.write(d);
+                                            </script>
+                                        </td>
+                                        <td>
+                                            <script>
+                                                var d = ConvertDateTime("{{ image.updated_on|date:'Y-m-d' }}", "{{ image.updated_on|time:'H:i' }}");
+                                                document.write(d);
+                                            </script>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex">
+                                                <a data-bs-toggle="modal" data-bs-target="#edit_category" onclick="GetImage('{{image.id}}')" class="btn btn-info shadow btn-xs sharp me-1" href=""><i class="fa fa-edit"></i></a>
+                                                <a style="margin-right:5px" href="{% url 'accounts:delete_image' image.id%}" message="Are you sure you want to delete this image?" class="btn btn-danger shadow btn-xs sharp action_confirm" ><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="add_category" data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Image</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form">
+                    <form onsubmit="Loader(this.id)" id="add-image" action="{% url 'accounts:landing_images' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="form-row justify-content-center">
+                                <div class="form-group required-field col-md-12">
+                                    <label class="form-label">Select Image</label>
+                                    <input type="file" name="image" id = "add_image"  class="form-control crop_img">
+                                    <p id="image-error-size" class = error>  </p>
+
+                                </div>
+                                <div class="col-lg-12 text-center">
+                                    <button type="submit" class="btn btn-primary">Save</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edit_category" data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Image</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form">
+                    <form onsubmit="Loader(this.id)" id="edit-image" action="{% url 'accounts:edit_image' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="form-row justify-content-center">
+                                <input type='hidden' name='id' id='image_id'>
+                                <div class="form-group required-field col-md-12">
+                                    <label class="form-label">Select Image</label>
+                                    <input type="file"  name="e_image" id='e_image' class="form-control crop_img">
+                                    <p id="image-error-size" class = error>  </p>
+
+                                </div>
+                                <div class="col-lg-12 text-center">
+                                    <button type="submit" class="btn btn-primary">Save</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL TO CROP THE IMAGE -->
+<div class="modal fade" id="modalCrop"  data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered  modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          </button>
+          <h4 class="modal-title">Crop the photo</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="location.reload()" aria-label="Close">
+
+        </div>
+        <div class="modal-body p-0" style="width: 100%;">
+          <img src="" id="image" style="width: 100%;">
+        </div>
+        <div class="modal-footer">
+
+          <button type="button" class="btn btn-primary js-crop-and-upload">Crop</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Edit MODAL TO CROP THE IMAGE -->
+
+<div class="modal fade" id="modalCropedit"  data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered  modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          </button>
+          <h4 class="modal-title">Crop the photo</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="location.reload()" aria-label="Close">
+
+        </div>
+        <div class="modal-body">
+          <img src="" id="e_image" style="width: 100%;">
+        </div>
+        <div class="modal-footer">
+
+          <button type="button" class="btn btn-primary js-crop-and-upload">Crop</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+{% include 'admin-includes/footer.html' %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="{% static 'admin-assets/js/copper.js' %}"></script>
+
+
+
+<script>
+  function GetImage(id){
+    $('#image_id').val(id);
+  }
+  // validator
+  jQuery.validator.addMethod("validate_image", 
+  function(value, element) {
+      let is_valid = false
+      if(value){
+        is_valid = true
+      }
+      return is_valid
+  },'Please select image');
+
+  jQuery.validator.addMethod("validate_extension", 
+  function(value, element) {
+    let is_valid = false
+    let extensions = ['jpg', 'jpeg', 'png','svg']
+    let file_extenson = value.toString().split('.')[1]
+      if(extensions.includes(file_extenson)){
+        is_valid = true
+      }
+
+      return is_valid
+  },'Please upload image in these format only (jpg, jpeg, png,svg)');
+
+  
+
+    $("#add-image").validate({
+        rules: {
+            image: {
+                validate_image:true,
+                validate_extension:true,
+            }
+        },
+        messages: {
+            image: {
+              validate_image: "Please select image",
+              validate_extension: "Please upload image in these format only (jpg, jpeg, png,svg)",
+               
+            }
+            
+        },
+    });   
+
+
+    $("#edit-image").validate({
+        rules: {
+            e_image: {
+              validate_image: true,
+              validate_extension:true,
+            }
+        },
+        messages: {
+            e_image: {
+              validate_image: "Please select image",
+              validate_extension: "Please upload image in these format only (jpg, jpeg, png,svg)",
+            }
+        },
+    });   
+</script>
+
+<script>
+    /* For Add */
+    $(function () {
+    let this_id = ''
+    let data_transfer = new DataTransfer();
+      $(".crop_img").change(function () {
+        this_id = $(this).attr('id')
+        if (this.files && this.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            // VALIDATE
+            let sizee_width= ''
+            let sizee_height = ''
+            let image_srcc = ''
+            image_srcc = e.target.result
+            const file_size_img = new Image();
+            file_size_img.onload = function() {
+              sizee_width = this.width
+              sizee_height = this.height
+              if(sizee_width >= 1697 && sizee_height >=  855){
+                $("#image").attr("src", e.target.result);
+                $("#modalCrop").modal("show");
+                $('#modalCrop .cropper-container').each(function() {
+                  $(this).css('width', '94%');
+                  $(this).css('margin', '0 auto');
+                });
+              }
+              else if(sizee_width < 1697 || sizee_height < 855 ){
+                  document.getElementById(this_id).value = '';
+                  swal({
+                    title: 'Image should be 1697*855',
+                    text: "",
+                    icon: "warning",
+                    showConfirmButton:false,
+                })
+                }
+            }
+            file_size_img.src = image_srcc
+
+          }
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+
+      /* SCRIPTS TO HANDLE THE CROPPER BOX */
+      var $image = $("#image");
+      var cropBoxData;
+      var canvasData;
+      $("#modalCrop").on("shown.bs.modal", function () {
+        $image.cropper({
+          viewMode: 1,
+          aspectRatio: 1697/855,
+          minCropBoxWidth:1697 ,
+          minCropBoxHeight: 855 ,
+          zoomOnWheel:false,
+          ready: function () {
+            $image.cropper("setCanvasData", canvasData);
+            $image.cropper("setCropBoxData", cropBoxData);
+          }
+        });
+      }).on("hidden.bs.modal", function () {
+        cropBoxData = $image.cropper("getCropBoxData");
+        canvasData = $image.cropper("getCanvasData");
+        $image.cropper("destroy");
+      });
+
+      $(".js-zoom-in").click(function () {
+        $image.cropper("zoom", 0.1);
+      });
+
+      $(".js-zoom-out").click(function () {
+        $image.cropper("zoom", -0.1);
+      });
+
+      /* SCRIPT TO COLLECT THE DATA AND POST TO THE SERVER */
+      $(".js-crop-and-upload").click(function() {
+        // for not uploaded multiple time even click multiple time
+        $('.js-crop-and-upload').prop('disabled', true);
+
+        var cropData = $image.cropper("getData");
+        var cropperrr = $image.data('cropper');
+
+        cropperrr.getCroppedCanvas().toBlob((blob) => {
+
+          const reader1 = new FileReader();
+
+          reader1.addEventListener("load", function (e) {
+            data_transfer.items.add(new File([blob, { type: 'image/png' }], 'image.png'));
+      
+            document.getElementById(this_id).files = data_transfer.files;
+    
+          }, false);
+          reader1.readAsDataURL(blob);
+        },'image/jpeg')
+        $("#modalCrop").modal("hide");
+
+
+    });
+
+    });
+
+  </script>

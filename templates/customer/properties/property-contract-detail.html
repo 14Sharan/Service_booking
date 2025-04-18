@@ -1,0 +1,492 @@
+{% include 'customer/includes/header.html' %}
+{% load static %}
+{% load extras %}
+<style>
+    .btn-primary {
+        color: #fff;
+        border: 0;
+        background-color: var(--theme-color);
+    }
+    .heart-class{
+        cursor: pointer;
+    }
+</style>
+
+<div class="page-body-wrapper container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body p-0">
+                    <div class="sidebar-widget property-form-group px-4">
+                        <div class="property-inr-details  pt-4">
+                            <div class="row mb-2">
+                                <div class="col-lg-8">
+                                    <div class="proper-inr-top">
+                                        <h3>{% if property.name %}{{property.name}}{% else %}-{% endif %}</h3>
+                                        <ul class="entry-meta">
+                                            <li>
+                                                <i class="fas fa-map-marker-alt"></i>{% if property.address %}{{property.address}}{% else %}-{% endif %}
+                                            </li>
+                                            <li><i class="far fa-clock"></i>
+                                            <script>
+                                                var d = ConvertDateTime("{{ property.created_on|date:'Y-m-d' }}", "{{ property.created_on|time:'H:i' }}");
+                                                document.write(d);
+                                            </script>
+                                            </li>
+                                            <li>
+                                                <i class="far fa-eye"></i>Views: <span>{{property.id|property_views}}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- For Ajax Functionality -->
+                                <input name="property_id" id="property_id" hidden value="{{property.id}}"> 
+                                <div class="col-lg-4">
+                                    <div class="proper-inr-rt">
+                                        <div class="prop-cost">
+                                            <h4>{% if property.final_amount %}${{property.final_amount|floatformat:"2g"}}{% else %}-{% endif %}</h4>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="property-view mb-3">
+                                        <div class="property-view position-relative mb-3">
+                                            <div class="gallery">                
+                                                <div class="swiper-container gallery-slider">
+                                                    <div class="swiper-wrapper">
+                                                        {% if property.property_video %}
+                                                        <div class="swiper-slide" onclick ="playVideo()">
+                                                                <video width="100%" height="100%" controls id = "play_video" onplay="myFunction('play')" onpause = "myFunction('pause')">
+                                                                <source src="{{property.property_video.url}}" type="video/mp4">
+                                                            </video>
+                                                        </div>
+                                                        {% endif %}
+                                                        {% if property.property_images.all %}
+                                                            {% for i in property.property_images.all %}
+                                                                <div class="swiper-slide" onclick="pauseVideo()">&nbsp;&nbsp;&nbsp;
+                                                                    <img src="{{i.image.url}}" />
+                                                                </div>
+                                                            {% endfor %}    
+                                                        {% else %}
+                                                            <div class="swiper-slide">
+                                                                <img src="https://swiperjs.com/demos/images/nature-1.jpg" />
+                                                            </div>
+                                                        {% endif %}  
+                                                    </div>
+                                                    <div class="swiper-button-prev"></div>
+                                                    <div class="swiper-button-next"  onclick="pauseVideo()"></div>
+                                                </div>
+                                            
+                                                <div class="swiper-container gallery-thumbs">
+                                                    <div class="swiper-wrapper" >
+                                                        {% if  property.property_video %}
+                                                        <div class="swiper-slide" onclick ="playVideo1()">
+                                                            <video width="100%" height="100%" controls id = "play_video1" onplay="myFunction('play')" onpause = "myFunction('pause')">
+                                                            <source src="{{property.property_video.url}}" type="video/mp4">
+                                                            </video> &nbsp;&nbsp;&nbsp;
+                                                        </div>
+                                                        {% endif %}
+                                                        {% if property.property_images.all %}
+                                                            {% for i in property.property_images.all %}
+                                                                <div class="swiper-slide" onclick="pauseVideo1()">
+                                                                    <img src="{{i.image.url}}" />
+                                                                </div>
+                                                            {% endfor %}   
+                                                        {% else %}
+                                                            <div class="swiper-slide">
+                                                                <img src="https://swiperjs.com/demos/images/nature-1.jpg" />
+                                                            </div>
+                                                        {% endif %}       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                    
+                                        <div class="overview-card mb-3 property-widget">
+                                            <div class="product-overview">
+                                                <div class="item-heading">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <h2 class="heading-title">Overview</h2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="product-amenities">
+                                                    <ul class="amenities-list">
+                                                        <li>
+                                                            <div class="amenities-icon">
+                                                                <i class="far fa-home"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-radio">
+                                                                    Type </h2>
+                                                                <span class="cfp-value">
+                                                                    {{property.category.category}} 
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                        {% comment %} <li>
+                                                            <div class="amenities-icon">
+                                                                <i class="far fa-car"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-radio">
+                                                                    Parking </h2>
+                                                                <span class="cfp-value">
+                                                                    Yes </span>
+                                                            </div>
+                                                        </li> {% endcomment %}
+                                                        <li>
+                                                            <div class="amenities-icon">
+                                                                <i class="far fa-booth-curtain"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-select">
+                                                                    Bedroom </h2>
+                                                                <span class="cfp-value">
+                                                                    {{property.bedrooms}} </span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="amenities-icon">
+                                                                <i class="fas fa-shower"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-select">
+                                                                    Bath </h2>
+                                                                <span class="cfp-value">
+                                                                    {{property.bathrooms}} </span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="amenities-icon">
+                                                                <i class="far fa-ruler-vertical"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-number">
+                                                                   {% if  preoperty.unit == 1 %} Sqft{% else %}Sqmt{% endif %} </h2>
+                                                                <span class="cfp-value">
+                                                                    {{property.size}} </span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="" style="">
+                                                            <div class="amenities-icon">
+                                                                <i class="fas fa-cog"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-radio">
+                                                                    Purpose </h2>
+                                                                <span class="cfp-value">
+                                                                    For{% if property.property_for == 1 %} Sale
+                                                                    {% else %}
+                                                                    Rent
+                                                                    {% endif %}</span>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="overview-card mb-3 property-widget">
+                                            <div class="product-overview">
+                                                <div class="item-heading">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            {% if property.amenties.all.count == 1%}
+                                                            <h2 class="heading-title">Amenity</h2>
+                                                            {% elif property.amenties.all.count > 1%}
+                                                            <h2 class="heading-title">Amenities</h2>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="product-amenities">
+                                                    <ul class="amenities-list">
+                                                    {% if property.amenties.all %}
+                                                        {% for data in property.amenties.all %}
+                                                        <li>
+                                                            <div class="card me-2">
+                                                                    <b>{{data.title}}</b>
+                                                            </div>
+                                                        </li>
+                                                        {% endfor %}
+                                                        {% else %}
+                                                        <li>
+                                                            <div class="card me-2">
+                                                                    <b>No amenity found</b>
+                                                            </div>
+                                                        </li>
+                                                        {% endif %}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="property-dis-card property-widget">
+                                        <div class="product-description">
+                                            <div class="item-heading">
+                                                <h2 class="heading-title">About This Listing</h2>
+                                            </div>
+                                            <p>{{property.description|safe}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="property-detail-form mb-3">
+                                        <div class="listing-sidebar">
+                                            <div class="rtcl-listing-user-info">
+                                                <div class="widget-contact-form list-group">
+                                                    <h3 class="widget-heading ">Property Documents</h3>
+                                                    <hr>
+                                                    <div class="rtcl-do-email my-2">
+                                                        <div class = "d-flex justify-content-between">
+                                                            <p><b>Title documentation</b></p>
+                                                            {% if property.propertiesdocumentations_set.all %}
+                                                            {% for data in property.propertiesdocumentations_set.all %}
+                                                                {% if data.signed_document %}
+                                                                    <a href = "{{data.signed_document.url}}" download><i style="color: #079795" class = "fa fa-download"></i></a>
+                                                                {% else %}
+                                                                  --                                                           
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            --
+                                                        {% endif %}
+                                                        </div>
+                                                        <div class = "d-flex justify-content-between my-2">
+                                                            <p><b>Contract document</b></p>
+                                                            {% if property.propertiesdocumentations_set.all %}
+                                                            {% for data in property.propertiesdocumentations_set.all %}
+                                                                {% if data.broki_fi_document %}
+                                                                    <a href = "{{data.broki_fi_document.url}}" download ><i style="color: #079795" class ="fa fa-download"></i></a>
+                                                                {% else %}
+                                                                  --                                                           
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            --
+                                                        {% endif %}
+                                                        </div>
+                                                       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% if property.propertiesdocumentations_set.all %}
+                                                <div class="rtcl-listing-user-info">
+                                                    <div class="widget-contact-form list-group">
+                                                        <h3 class="widget-heading ">Upload Signed Document</h3>
+                                                        <hr>
+                                                        <div class="rtcl-do-email my-2">
+                                                            <div class = "d-flex justify-content-between">
+                                                                <a data-bs-toggle="modal" data-bs-target="#upload_signed_document" onclick="GetProperty('{{property.id}}')" href="" class = "theme-btn">Upload Document</a>
+                                                                {% for data in property.propertiesdocumentations_set.all %}
+                                                                    {% if data.customer_document %}
+                                                                        <a href = "{{data.customer_document.url}}" download><i style="color: #079795" class = "fa fa-download"></i></a>
+                                                                    {% else %}
+                                                                    --                                                           
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="upload_signed_document" data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Signed Document</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form d-flex justify-content-between">
+                    <form onsubmit="Loader(this.id)" id="add-signed-document" action="{% url 'customer:properties_documents_details' property.id%}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class=" col-lg-12 form-row d-flex justify-content-between">
+                                <div class="col-lg-10  form-group required-field col-md-12">
+                                    <label class="form-label">Signed Document</label>
+                                    <input type="file" placeholder="Please enter category name" name="signed_document" class="form-control" >
+                                </div>
+                                <div class="col-lg-2 text-center" style='margin-top: 37px;'>
+                                    <button type="submit" class="btn btn-primary">Save</a>
+                                </div>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'customer/includes/footer.html' %}
+<script >
+    $(document).ready(function () {
+
+        // form validation
+        $("#property-contact").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 3,
+                    normalizer: function (value) {
+                        return $.trim(value);
+                    },
+                },
+                email: {
+                    required: true,
+                    normalizer: function (value) {
+                        return $.trim(value);
+                    },
+                    email:true
+                },
+                mobile: {
+                    required:true,
+                    normalizer: function (value) {
+                        return $.trim(value);
+                    },
+                    minlength: 8,
+                    maxlength:15,
+                    number:true
+                },
+                message: {
+                    required:true,
+                    normalizer: function (value) {
+                        return $.trim(value);
+                    }
+                },
+            },
+            messages: {
+                name: {
+                    required: "Please enter name",
+                    minlength: "Enter atleast 3 characters"
+                },
+                email: {
+                    required: "Please enter email",
+                },
+                mobile: {
+                    required: "Please enter mobile",
+                },
+                message: {
+                    required: "Please enter message",
+                },
+            }
+        });    
+
+
+        // add to fav
+        $("#heart").click(function () {
+            if ($("#heart").hasClass("fas")) {
+                $("#heart").html('<i class="far fa-heart"></i>');
+                $("#heart").removeClass("fas");
+                $.ajax({
+                    url: "{% url 'customer:remove_wishlist' %}",
+                    type: 'GET',
+                    data: { 'property_id': $('#property_id').val() },
+                    success: function (data) {
+                        $('#wish_count').text(data['count'])
+                    }
+                });
+            } else {
+                $("#heart").html('<i class="far fas fa-heart"></i>');
+                $("#heart").addClass("fas");
+                $.ajax({
+                    url: "{% url 'customer:add_wishlist' %}",
+                    type: 'GET',
+                    data: { 'property_id': $('#property_id').val() },
+                    success: function (data) {
+                        $('#wish_count').text(data['count'])
+                    }
+                });
+            }
+        });
+
+    });
+</script>
+
+<script>
+    var slider = new Swiper ('.gallery-slider', {
+        slidesPerView: 1,
+        centeredSlides: true,
+        loop: false,
+        loopedSlides: 6, 
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+    });
+    
+    var thumbs = new Swiper ('.gallery-thumbs', {
+        slidesPerView: 'auto',
+        spaceBetween: 10,
+        centeredSlides: true,
+        loop: false,
+        slideToClickedSlide: true,
+    });
+    slider.controller.control = thumbs;
+    thumbs.controller.control = slider;
+
+
+    function playVideo() { 
+        $('#play_video').get(0).play(); 
+    } 
+  
+    function pauseVideo() { 
+        $('#play_video').get(0).pause(); 
+        $('#play_video1').get(0).pause(); 
+    } 
+
+    function playVideo1() { 
+        $('#play_video1').get(0).play(); 
+    } 
+
+    function pauseVideo1() { 
+        $('#play_video').get(0).pause(); 
+        $('#play_video1').get(0).pause(); 
+    } 
+    function myFunction(video){
+        if (video == 'play'){
+            $('#play_video1').get(0).play(); 
+            $('#play_video').get(0).play(); 
+    
+        }else{
+            $('#play_video1').get(0).pause(); 
+            $('#play_video').get(0).pause(); 
+        }
+    }
+</script>
+
+<script>
+
+    $("#add-signed-document").validate({
+        rules: {
+            signed_document: {
+                required:true,
+                accept: "jpg,png,jpeg,svg,pdf"
+            }
+        },
+        messages: {
+            signed_document: {
+                required:"Please choose file",
+                accept: "Please upload file in these format only (jpg, jpeg, png,svg,pdf)"
+            }
+            
+        },
+    }); 
+
+</script>

@@ -1,0 +1,125 @@
+{% include "broker/includes/header.html" %}
+{% load static %}{% load extras %}
+{% load humanize %}
+
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'broker/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'broker:broker_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Notifications</li>
+                </ul>
+                <div class="page-body-wrapper">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <div class="card-title mb-0">
+                                            Notifications
+                                        </div>
+                                        <div class="page-btn d-flex flex-wrap">
+                                            <a title="Mark All Read" class="btn btn-primary me-1" href="{% url 'broker:mark_read_notifications' %}"><i class="fas fa-check-double me-1"></i> Mark All Read</a>
+                                            <a class="btn btn-danger me-1 action_confirm" message="Are you sure you want to clear all notifications?" 
+                                            href="{% url 'broker:delete_notifications' %}"><i class="fas fa-trash-alt"></i></a></a>
+                                            <a class="btn btn-secondary" href="{% url 'broker:broker_dashboard' %}"><i class="fa fa-angle-left me-1"></i> Back</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity mt-3">
+                            <div class="activity-box">
+                                {% if notifications %}
+                                <ul class="activity-list">
+                                    {% for notification in notifications %}
+                                    <li>
+                                        <a {% if notification.notification_type == 1 %} href="{% url 'users:view_user' notification.created_by.id %}?n_id={{notification.id}}" {% elif notification.booking %} href="{% url 'bookings:view_booking' notification.booking.id %}?n_id={{notification.id}}" {% endif %} >
+                                            <div class="activity-user">
+                                                {% if notification.created_by.profile_pic %}
+                                                <img alt="Lesley Grauer" src="{{notification.created_by.profile_pic.url}}" class=" img-fluid">
+                                                {% else %}
+                                                <img alt="Lesley Grauer" src="{% static 'admin-assets/images/dp.png' %}" class=" img-fluid">
+                                                {% endif %}
+                                            </div>
+                                            <div class="activity-content">
+                                                <div class="timeline-content">
+                                                    <span class="font-700">{% if notification.title %}{{notification.title}}{% else %}-{% endif %}</span>
+                                                    <div class="activity-right-content">
+                                                        <span class="time">
+                                                            <script>
+                                                                var date = ConvertDateTime("{{ notification.created_on|date:'Y-m-d' }}", "{{ notification.created_on|time:'H:i' }}");
+                                                                document.write(date);
+                                                            </script>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="description">
+                                                    <p>{% if notification.description %}{{notification.description}}{% else %}-{% endif %}</p>
+                                                    <span class="activity-check">
+                                                        {% if notification.is_read %}
+                                                        <i class="fas fa-check-double"></i>
+                                                        {% else %}
+                                                        <i class="fas fa-check"></i>
+                                                        {% endif %}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% if notifications.has_other_pages %}
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination">
+                                            {% if notifications.has_previous %}
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?{% url_replace request 'page' notifications.previous_page_number %}">&laquo;</a>                                          
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">&laquo;</span>
+                                                </li>
+                                            {% endif %}
+                                            {% for i in notifications.paginator.page_range %}
+                                                {% if notifications.number == i %}
+                                                    <li class="page-item active">
+                                                        <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                                                    </li>
+                                                {% elif i > notifications.number|add:'-5' and i < notifications.number|add:'5' %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="?{% url_replace request 'page' i %}">{{ i }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if notifications.has_next %}
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?{% url_replace request 'page' notifications.next_page_number %}">&raquo;</a>
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">&raquo;</span>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </nav>
+                                {% endif %}
+                                {% else %}
+                                <ul class="activity-list">
+                                    <li class="no-activity">
+                                        <div class="activity-content d-flex justify-content-center">No Notifications Found</div>
+                                    </li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include "broker/includes/footer.html" %}

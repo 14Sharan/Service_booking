@@ -1,0 +1,524 @@
+{% include 'customer/includes/header.html' %}
+{% load static %}
+{% load extras %}
+<style>
+    .btn-primary {
+        color: #fff;
+        border: 0;
+        background-color: var(--theme-color);
+    }
+    .heart-class{
+        cursor: pointer;
+    }
+</style>
+
+<div class="page-body-wrapper container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body p-0">
+                    <div class="sidebar-widget property-form-group px-4">
+                        <div class="property-inr-details  pt-4">
+                            <div class="row mb-2">
+                                <div class="col-lg-8">
+                                    <div class="proper-inr-top">
+                                        <h3>{% if property.name %}{{property.name}}{% else %}-{% endif %}</h3>
+                                        <ul class="entry-meta">
+                                            <li>
+                                                <i class="fas fa-map-marker-alt"></i>{% if property.address %}{{property.address}}{% else %}-{% endif %}
+                                            </li>
+                                            <li><i class="far fa-clock"></i>
+                                            <script>
+                                                var d = ConvertDateTime("{{ property.created_on|date:'Y-m-d' }}", "{{ property.created_on|time:'H:i' }}");
+                                                document.write(d);
+                                            </script>
+                                            </li>
+                                            <li>
+                                                <i class="far fa-eye"></i>Views: <span>{{property.id|property_views}}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- For Ajax Functionality -->
+                                <input name="property_id" id="property_id" hidden value="{{property.id}}"> 
+                                <div class="col-lg-4">
+                                    <div class="proper-inr-rt">
+                                        <div class="prop-cost">
+                                            {% if property.final_amount %}
+                                            <h4>${{property.final_amount|floatformat:"2g"}}</h4>
+                                            {% else %}
+                                            <h4>${{property.cost|floatformat:"2g"}}</h4>
+                                            {% endif %}
+                                        </div>
+                                        <div class="prop-link">
+                                            <ul>
+                                                <a class = "theme-btnn" href="{% url 'customer:properties_documents_details' property.id %}">Buy</a>
+
+                                                <li>
+                                                    {% if not wishlist %}
+                                                        <a id="heart" class="heart-class">
+                                                            <i class="far fa-heart"></i>
+                                                        </a>
+                                                    {% else %}
+                                                        <a class="fas" id="heart">
+                                                            <i class="far fas fa-heart"></i>
+                                                        </a>
+                                                    {% endif %}    
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:void(0);">
+                                                        <i class="far fa-share-alt"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="property-view mb-3">
+                                        <div class="property-view position-relative mb-3">
+                                            <div class="gallery">                
+                                                <div class="swiper-container gallery-slider">
+                                                    <div class="swiper-wrapper">
+                                                        {% if property.property_video %}
+                                                        <div class="swiper-slide" onclick ="playVideo()">
+                                                                <video width="100%" height="100%" controls id = "play_video" onplay="myFunction('play')" onpause = "myFunction('pause')">
+                                                                <source src="{{property.property_video.url}}" type="video/mp4">
+                                                            </video>
+                                                        </div>
+                                                        {% endif %}
+                                                        {% if property.property_images.all %}
+                                                            {% for i in property.property_images.all %}
+                                                                <div class="swiper-slide" onclick="pauseVideo()">&nbsp;&nbsp;&nbsp;
+                                                                    <img src="{{i.image.url}}" />
+                                                                </div>
+                                                            {% endfor %}    
+                                                        {% else %}
+                                                            <div class="swiper-slide">
+                                                                <img src="https://swiperjs.com/demos/images/nature-1.jpg" />
+                                                            </div>
+                                                        {% endif %}  
+                                                    </div>
+                                                    <div class="swiper-button-prev"></div>
+                                                    <div class="swiper-button-next"  onclick="pauseVideo()"></div>
+                                                </div>
+                                            
+                                                <div class="swiper-container gallery-thumbs">
+                                                    <div class="swiper-wrapper" >
+                                                        {% if  property.property_video %}
+                                                        <div class="swiper-slide" onclick ="playVideo1()">
+                                                            <video width="100%" height="100%" controls id = "play_video1" onplay="myFunction('play')" onpause = "myFunction('pause')">
+                                                            <source src="{{property.property_video.url}}" type="video/mp4">
+                                                            </video> &nbsp;&nbsp;&nbsp;
+                                                        </div>
+                                                        {% endif %}
+                                                        {% if property.property_images.all %}
+                                                            {% for i in property.property_images.all %}
+                                                                <div class="swiper-slide" onclick="pauseVideo1()">
+                                                                    <img src="{{i.image.url}}" />
+                                                                </div>
+                                                            {% endfor %}   
+                                                        {% else %}
+                                                            <div class="swiper-slide">
+                                                                <img src="https://swiperjs.com/demos/images/nature-1.jpg" />
+                                                            </div>
+                                                        {% endif %}       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                    
+                                        <div class="overview-card mb-3 property-widget">
+                                            <div class="product-overview">
+                                                <div class="item-heading">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <h2 class="heading-title">Overview</h2>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="product-amenities">
+                                                    <ul class="amenities-list">
+                                                        <li>
+                                                            <div class="amenities-icon">
+                                                                <i class="far fa-home"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-radio">
+                                                                    Type </h2>
+                                                                <span class="cfp-value">
+                                                                    {{property.category.category}} 
+                                                                </span>
+                                                            </div>
+                                                        </li>
+                                                        {% comment %} <li>
+                                                            <div class="amenities-icon">
+                                                                <i class="far fa-car"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-radio">
+                                                                    Parking </h2>
+                                                                <span class="cfp-value">
+                                                                    Yes </span>
+                                                            </div>
+                                                        </li> {% endcomment %}
+                                                        <li>
+                                                            <div class="amenities-icon">
+                                                                <i class="far fa-booth-curtain"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-select">
+                                                                    Bedroom </h2>
+                                                                <span class="cfp-value">
+                                                                    {{property.bedrooms}} </span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="amenities-icon">
+                                                                <i class="fas fa-shower"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-select">
+                                                                    Bath </h2>
+                                                                <span class="cfp-value">
+                                                                    {{property.bathrooms}} </span>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="amenities-icon">
+                                                                <i class="far fa-ruler-vertical"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-number">
+                                                                   {% if  property.unit == 1 %} Sqft{% else %}Sqmt{% endif %} </h2>
+                                                                <span class="cfp-value">
+                                                                    {{property.size}} </span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="" style="">
+                                                            <div class="amenities-icon">
+                                                                <i class="fas fa-cog"></i>
+                                                            </div>
+                                                            <div class="amenities-content">
+                                                                <h2 class="heading-title rtcl-field-radio">
+                                                                    Purpose </h2>
+                                                                <span class="cfp-value">
+                                                                    For{% if property.property_for == 1 %} Sale
+                                                                    {% else %}
+                                                                    Rent
+                                                                    {% endif %}</span>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="overview-card mb-3 property-widget">
+                                            <div class="product-overview">
+                                                <div class="item-heading">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            {% if property.amenties.all.count == 1%}
+                                                            <h2 class="heading-title">Amenity</h2>
+                                                            {% elif property.amenties.all.count > 1%}
+                                                            <h2 class="heading-title">Amenities</h2>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="product-amenities">
+                                                    <ul class="amenities-list">
+                                                    {% if property.amenties.all %}
+                                                        {% for data in property.amenties.all %}
+                                                        <li>
+                                                            <div class="card me-2">
+                                                                    <b>{{data.title}}</b>
+                                                            </div>
+                                                        </li>
+                                                        {% endfor %}
+                                                        {% else %}
+                                                        <li>
+                                                            <div class="card me-2">
+                                                                    <b>No amenity found</b>
+                                                            </div>
+                                                        </li>
+                                                        {% endif %}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="property-dis-card property-widget">
+                                        <div class="product-description">
+                                            <div class="item-heading">
+                                                <h2 class="heading-title">About This Listing</h2>
+                                            </div>
+                                            <p>{{property.description|safe}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="property-detail-form mb-3">
+                                        <div class="listing-sidebar">
+                                            <div class="rtcl-listing-user-info mt-4">
+                                                <div class="widget-contact-form list-group">
+                                                    <h3 class="widget-heading">Contact Broki-fi Real-Estate </h3>
+                                                    <div class="rtcl-member-store-info">
+                                                        <div class="media mt-3">
+                                                            <a class="mr-3" href="javascript:void(0);">
+                                                                {% if property.seller %}
+                                                                    {% if property.seller.profile_pic %}
+                                                                        <img src="{{property.seller.profile_pic.url}}" class="attachment-40x40 size-40x40" alt="img" decoding="async" title="" width="40" height="40"> </a>
+                                                                    {% else %}
+                                                                        <img src="{% static 'admin-assets/images/dp.png' %}"
+                                                                    class="attachment-40x40 size-40x40" alt="img" decoding="async" title=""
+                                                                    width="40" height="40">
+                                                                    {% endif %}    
+                                                                    <div class="media-body">
+                                                                        <h4 class="mt-0"> {% if property.seller.full_name %}{{property.seller.full_name}}{% else %}{{property.seller.email}}{% endif %}</h4>
+                                                                        <div class="item-number phone reveal-phone">
+                                                                            <i class="fa fa-phone-alt"></i>
+                                                                            <div class="numbers">
+                                                                                {% if property.seller.role_id == 3 %}
+                                                                                    {% if property.seller.mobile_no %}
+                                                                                        {{property.seller.mobile_no}}
+                                                                                    {% else %}
+                                                                                        -
+                                                                                    {% endif %}
+                                                                                {% elif  property.seller.role_id == 1  %}
+                                                                                {% contact_details 'number' as contact_number %}
+                                                                                    {% for number in contact_number %}
+                                                                                        {{number.country_code}} {{number.mobile_no}}<br>
+                                                                                    {% endfor %}
+                                                                                {% endif %}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="agency-email listing-mail">
+                                                                            <i class="far fa-envelope"></i>
+                                                                            <a href="">{% if property.seller.email %}{{property.seller.email}}{% endif %}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                {% elif  property.broker %}
+                                                                        {% if property.broker.profile_pic %}
+                                                                            <img src="{{property.broker.profile_pic.url}}" class="attachment-40x40 size-40x40" alt="img" decoding="async" title="" width="40" height="40"> </a>
+                                                                        {% else %}
+                                                                            <img src="{% static 'admin-assets/images/dp.png' %}"
+                                                                        class="attachment-40x40 size-40x40" alt="img" decoding="async" title=""
+                                                                        width="40" height="40">
+                                                                        {% endif %}    
+                                                                        <div class="media-body">
+                                                                            <h4 class="mt-0"> {% if property.broker.full_name %}{{property.broker.full_name}}{% else %}{{property.broker.email}}{% endif %}</h4>
+                                                                            <div class="item-number phone reveal-phone">
+                                                                                <i class="fa fa-phone-alt"></i>
+                                                                                <div class="numbers">{% if property.broker.mobile_no %}{{property.broker.mobile_no}}{% else %}-{% endif %}  </div>
+                                                                            </div>
+                                                                            <div class="agency-email listing-mail">
+                                                                                <i class="far fa-envelope"></i>
+                                                                                <a href="">{% if property.broker.email %}{{property.broker.email}}{% endif %}</a>
+                                                                            </div>
+                                                                        </div>
+                                                                    {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="rtcl-do-email">
+                                                        <form onsubmit="Loader(this.id)" id="property-contact" action="{% url 'properties:create_property_query' property.id %}" method="POST" >
+
+                                                            <div class="form-group mb-3">
+                                                                <input type="text" name="name" class="form-control"  placeholder="Name *" >
+                                                            </div>
+                                                            <div class="form-group mb-3">
+                                                                <input type="email" name="email"  class="form-control"  placeholder="Email*" >
+                                                            </div>
+                                                            <div class="form-group mb-3">
+                                                                <input type="text" name="mobile" class="form-control" placeholder="Phone*">
+                                                            </div>
+                                                            <div class="form-group mb-3">
+                                                                <textarea class="form-control" name="message" rows="5" cols="20" placeholder="Message*"></textarea>
+                                                            </div>
+                                                            <div class="form-group text-end">
+                                                                <button type="submit" class="theme-btn">Send Message</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="propty-detail-listing property-widget">
+                                        <h2 class="heading-title">Latest Listings</h2>
+                                            {% for i in properties %}
+                                        <div onclick="location.href='{% url 'customer:property_details' i.id %}'"class="listing-item">
+                                            <div class="listing-thumb">
+                                            {% if i.property_images.all %}
+                                                <a  href="javascript:void(0);">
+                                                    <img src="{{i.property_images.first.image.url}}" alt="Thumb" class="rtcl-thumbnail"> 
+                                                </a>
+                                            {% else %}
+                                                <a href="javascript:void(0);">
+                                                    <img src="{% static 'admin-assets/images/dp.png' %}" alt="Thumb" class="rtcl-thumbnail">   
+                                                </a>
+                                            {% endif %}
+                                            </div>
+                                            <div class="item-content">
+                                                <h3 class="listing-title "><a href="javascript:void(0);">{% if i.name %}{{i.name}}{% else %}-{% endif %}</a></h3>
+                                                <p><i class="fas fa-map-marker-alt me-1"></i>{% if i.address %}{{i.address}}{% else %}-{% endif %}</p>
+                                                <div class="listing-price">
+                                                    <h4>{% if i.final_amount %}${{i.final_amount|floatformat:"2g"}}/-{% else %}-{% endif %}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% include 'customer/includes/footer.html' %}
+<script >
+    $(document).ready(function () {
+
+        // form validation
+        $("#property-contact").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 3,
+                    normalizer: function (value) {
+                        return $.trim(value);
+                    },
+                },
+                email: {
+                    required: true,
+                    normalizer: function (value) {
+                        return $.trim(value);
+                    },
+                    email:true
+                },
+                mobile: {
+                    required:true,
+                    normalizer: function (value) {
+                        return $.trim(value);
+                    },
+                    minlength: 8,
+                    maxlength:15,
+                    number:true
+                },
+                message: {
+                    required:true,
+                    normalizer: function (value) {
+                        return $.trim(value);
+                    }
+                },
+            },
+            messages: {
+                name: {
+                    required: "Please enter name",
+                    minlength: "Enter atleast 3 characters"
+                },
+                email: {
+                    required: "Please enter email",
+                },
+                mobile: {
+                    required: "Please enter mobile",
+                },
+                message: {
+                    required: "Please enter message",
+                },
+            }
+        });    
+
+
+        // add to fav
+        $("#heart").click(function () {
+            if ($("#heart").hasClass("fas")) {
+                $("#heart").html('<i class="far fa-heart"></i>');
+                $("#heart").removeClass("fas");
+                $.ajax({
+                    url: "{% url 'customer:remove_wishlist' %}",
+                    type: 'GET',
+                    data: { 'property_id': $('#property_id').val() },
+                    success: function (data) {
+                        $('#wish_count').text(data['count'])
+                    }
+                });
+            } else {
+                $("#heart").html('<i class="far fas fa-heart"></i>');
+                $("#heart").addClass("fas");
+                $.ajax({
+                    url: "{% url 'customer:add_wishlist' %}",
+                    type: 'GET',
+                    data: { 'property_id': $('#property_id').val() },
+                    success: function (data) {
+                        $('#wish_count').text(data['count'])
+                    }
+                });
+            }
+        });
+
+    });
+</script>
+
+<script>
+    var slider = new Swiper ('.gallery-slider', {
+        slidesPerView: 1,
+        centeredSlides: true,
+        loop: false,
+        loopedSlides: 6, 
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+    });
+    
+    var thumbs = new Swiper ('.gallery-thumbs', {
+        slidesPerView: 'auto',
+        spaceBetween: 10,
+        centeredSlides: true,
+        loop: false,
+        slideToClickedSlide: true,
+    });
+    slider.controller.control = thumbs;
+    thumbs.controller.control = slider;
+
+
+    function playVideo() { 
+        $('#play_video').get(0).play(); 
+    } 
+  
+    function pauseVideo() { 
+        $('#play_video').get(0).pause(); 
+        $('#play_video1').get(0).pause(); 
+    } 
+
+    function playVideo1() { 
+        $('#play_video1').get(0).play(); 
+    } 
+
+    function pauseVideo1() { 
+        $('#play_video').get(0).pause(); 
+        $('#play_video1').get(0).pause(); 
+    } 
+    function myFunction(video){
+        if (video == 'play'){
+            $('#play_video1').get(0).play(); 
+            $('#play_video').get(0).play(); 
+    
+        }else{
+            $('#play_video1').get(0).pause(); 
+            $('#play_video').get(0).pause(); 
+        }
+    }
+</script>

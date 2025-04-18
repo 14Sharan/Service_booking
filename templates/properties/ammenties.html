@@ -1,0 +1,216 @@
+{% include 'admin-includes/header.html' %}
+{% load static %}{% load extras %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a class="white-text" href="{% url 'properties:property_ammenty' %}">Property Amenities</a>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        
+        </div>
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+				<div class="card-title mb-0">
+					Property Amenities
+				</div>
+                <div class="page-btn">
+                    <a data-bs-toggle="modal" data-bs-target="#add_category" class="btn btn-primary" href=""><i class="fas fa-plus me-1"></i> Amenities</a>
+                </div>
+			</div>
+            <div class="card-body">
+                <div class="dataview">
+                    <form onsubmit="Loader()" action="{% url 'properties:property_ammenty' %}" method="GET">
+                        <div class="table-responsive">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Created On</th>
+                                        <th>Updated On</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <thead>
+                                    <tr class="search-row">
+                                        <td><input type="text" value="{{title}}" class="form-control" name="title" maxlength="20"></td>
+                                        <td><input type="date" onkeydown="return false" value="{{created_on}}" class="position-relative form-control" onchange="this.form.submit()" name="created_on"></td>
+                                        <td><input type="date" onkeydown="return false" value="{{updated_on}}" class="position-relative form-control" onchange="this.form.submit()" name="updated_on"></td>
+                                        <td><button type="submit" class='btn btn-primary'>Search</button></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if ammenties %}
+                                    {% for ammenty in ammenties %}
+                                    <tr>
+                                        <td>{% if ammenty.title %}{{ammenty.title}}{% else %}-{% endif%}</td>
+                                        <td>
+                                            <script>
+                                                var d = ConvertDateTime("{{ ammenty.created_on|date:'Y-m-d' }}", "{{ ammenty.created_on|time:'H:i' }}");
+                                                document.write(d);
+                                            </script>
+                                        </td>
+                                        <td>
+                                            <script>
+                                                var d = ConvertDateTime("{{ ammenty.updated_on|date:'Y-m-d' }}", "{{ ammenty.updated_on|time:'H:i' }}");
+                                                document.write(d);
+                                            </script>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex">
+                                                <a data-bs-toggle="modal" data-bs-target="#edit_category" onclick='GetCategory("{{ammenty.id}}","{{ammenty.title}}")' class="btn btn-info shadow btn-xs sharp me-1" href=""><i class="fa fa-edit"></i></a>
+                                                <a style="margin-right:5px" href="{% url 'properties:delete_ammenty' ammenty.id %}" message="Are you sure you want to delete this property ammenty?" class="btn btn-danger shadow btn-xs sharp action_confirm" ><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                    {% if ammenties.has_other_pages %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {% if ammenties.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% url_replace request 'page' ammenties.previous_page_number %}">&laquo;</a>                                          
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">&laquo;</span>
+                                </li>
+                            {% endif %}
+                            {% for i in ammenties.paginator.page_range %}
+                                {% if ammenties.number == i %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                                    </li>
+                                {% elif i > ammenties.number|add:'-5' and i < ammenties.number|add:'5' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{% url_replace request 'page' i %}">{{ i }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if categories.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% url_replace request 'page' categories.next_page_number %}">&raquo;</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">&raquo;</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="add_category" data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Amenity</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form">
+                    <form onsubmit="Loader(this.id)" id="add-ammenty" action="{% url 'properties:property_ammenty' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="form-row justify-content-center">
+                                <div class="form-group required-field col-md-12">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" placeholder="Please enter amenity name" name="title" class="form-control" maxlength="50">
+                                </div>
+                                <div class="col-lg-12 text-center">
+                                    <button type="submit" class="btn btn-primary">Save</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edit_category" data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Amenity</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form">
+                    <form onsubmit="Loader(this.id)" id="edit-ammenty" action="{% url 'properties:property_ammenty' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="form-row justify-content-center">
+                                <input type='hidden' name='id' id='id'>
+                                <div class="form-group required-field col-md-12">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" placeholder="Please enter amenity name" name="title" id='title' class="form-control" maxlength="50">
+                                </div>
+                                <div class="col-lg-12 text-center">
+                                    <button type="submit" class="btn btn-primary">Save</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% include 'admin-includes/footer.html' %}
+
+<script>
+    function GetCategory(id,title){
+        $('#id').val(id);
+        $('#title').val(title);
+    }   
+    $("#add-ammenty").validate({
+        rules: {
+            title: {
+                required: true,
+                // ckspecial: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            }
+        },
+        messages: {
+            title: {
+                required: "Please enter amenity name",
+                // ckspecial: "No Special Charaters allowed except [, . - _ / ']",
+            }
+            
+        },
+    });   
+    $("#edit-ammenty").validate({
+        rules: {
+            title: {
+                required: true,
+                // ckspecial: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            }
+        },
+        messages: {
+            title: {
+                required: "Please enter amenity name",
+                // ckspecial: "No Special Charaters allowed except [, . - _ / ']"
+            }
+        },
+    });   
+</script>

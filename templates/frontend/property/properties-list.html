@@ -1,0 +1,293 @@
+{% load static %}
+{% load extras %}
+{% load humanize %}
+
+
+{% include 'frontend/includes/header.html' %}
+<!-- page title area start  -->
+<section class="page-title-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-title-wrapper text-center">
+                    <h1 class="page-title mb-10">Property List</h1>
+                    <div class="breadcrumb-menu">
+                        <nav aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs">
+                            <ul class="trail-items">
+                                <li class="trail-item trail-begin"><a
+                                        href="{% url 'frontend:index' %}"><span>Home</span></a></li>
+                                <li class="trail-item trail-end"><span>Property List</span></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- page title area end  -->
+
+<section class="property_list py-5">
+    <div class="container">
+        <div class="property-list-inr">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="right_sidebar_area">
+                        <a href="" class="close-filter"><i class="fas fa-times"></i></a>
+                        <aside class="s_widget categories_widget">
+                            <div class="s_title filter-main-heading mb-4">
+                                <h3>Applied Filters </h3>
+                                <a href="" class="">Clear All</a>
+                            </div>
+                        </aside>
+                             {% comment %}
+                            <ul class="tags">
+                                <li class="active">
+                                    <a href="javascript:void(0)"> Apartment <svg xmlns="http://www.w3.org/2000/svg"
+                                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-x">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg> </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)"> 1BHK <svg xmlns="http://www.w3.org/2000/svg"
+                                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-x">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg></a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)"> 2BHK<svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-x">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg> </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)"> Houses<svg xmlns="http://www.w3.org/2000/svg"
+                                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-x">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg> </a>
+                                </li>
+                            </ul>
+                         {% endcomment %}
+                        <aside class="s_widget categories_widget">
+                            <div class="s_title">
+                                <h4>Select Category</h4>
+                            </div>
+
+                            <div class="catgory-check-card checkbox-list-scroll">
+                                {% for category in categories%}
+                                <div class="checkbox-animate">
+                                    <label>
+                                        <input type="checkbox" class = "category_class" value = "{{category.id}}" name="category_check" onclick = "GetCategory('{{category.id}}')">
+                                        <span class="input-check"></span>
+                                        {% if category.category %} {{category.category}}{% else %}-{% endif %}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                          
+                            </div>
+                        </aside>
+                        <aside class="s_widget categories_widget">
+                            <div class="s_title">
+                                <h4>Budget</h4>
+                            </div>
+
+                            <div class="catgory-check-card">
+                                <div class="checkbox-animate">
+                                    <label>
+                                        <input type="radio" name="check" onchange="GetCategory(); GetBudget(this.value);" value ="1" class = "budget_class">
+                                        <span class="input-check"></span>
+                                        Low to High
+                                    </label>
+                                </div>
+                                <div class="checkbox-animate">
+                                    <label>
+                                        <input type="radio" name="check"  onchange="GetCategory(); GetBudget(this.value);" value ="2"  class = "budget_class">
+                                        <span class="input-check"></span>
+                                        High to Low
+                                    </label>
+                                </div>
+                                <div class="checkbox-animate">
+                                    <label>
+                                        <input type="radio" name="check"  onchange="GetCategory() ; GetBudget(this.value);" value ="3" class = "budget_class">
+                                        <span class="input-check"></span>
+                                        Custom Budget
+                                    </label>
+                                </div>
+                            </div>
+                        </aside>
+                        <aside class="s_widget categories_widget price_widget" id = "range_filter"  style="display:None">
+                            <div class="s_title">
+                                <h4>Select Custom Budget Price</h4>
+                            </div>
+                            <div class="budget-slider">
+                                <div class="values">
+                                    <div class="min-value"></div>
+                                    <div class="max-value"></div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="range-slider" data-min='0' data-max={{final_price}} data-step="10">
+                                    <input type="hidden" class="price_change" name="min-price" id="min-price" onchange="GetCategory()" >
+                                    <input type="hidden" class="price_change" name="max-price" id="max-price" onchange="GetCategory()" >
+                                    <div class="slider-track">
+                                      <span class='slider-track-filled' ></span>
+                                    </div>
+                                    <div class="min-thumb"></div>
+                                    <div class="max-thumb"></div>
+                                  </div>
+                                  </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="mob-filter">
+                        <a title="Filter" href="#0"><i class="fas fa-sort-amount-up"></i></a>
+                    </div>
+                    <div class="prop-top-hd d-flex align-items-center justify-content-between mb-4">
+                        {% comment %} <div class="prop-tp-lft">
+                            <h4>Showing 13 results</h4>
+                        </div> {% endcomment %}
+                        <div class="property-sort">
+                            <h4>Sort by:</h4>
+                            <form action = "{% url 'frontend:properties_list' %}" method = "GET">
+                            <select class="form-select" aria-label="Default select example" id = "default_value" name = "sort_by" onchange="GetCategory()">
+                                <option selected>Default</option>
+                                <option value="1">A to Z ( title )</option>
+                                <option value="2">Z to A ( title )</option>
+                                <option value="3">Date added ( oldest )</option>
+                                <option value="4">Most viewed</option>
+                                <option value="5">Less viewed</option>
+                            </select>
+                        </form>
+                        </div>
+                      
+                        <div class="property-view d-none d-md-none d-lg-block">
+                            <a id="grd1" class="active" href="javascript:void(0);">
+                                <i class="fas fa-th-large"></i>
+                            </a>
+                            <a id="lst1" href="javascript:void(0);">
+                                <i class="fas fa-list"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="property-view-cards">
+                        <div class="proListRow row" id = "property_row">
+                            {% for property in properties%}
+                            <div class="col-lg-4 mt-4 proListItem">
+                                <div class="property-sale-card">                                
+                                    <div class="property-sale-img">
+                                        {% if property.property_images.all%}
+                                        <a href="{% url 'frontend:property_details' property.id %}"><img src="{{property.property_images.first.image.url}}" alt="logo"></a>
+                                        {% else %}
+                                        <a href="{% url 'frontend:property_details' property.id %}"><img src="{% static 'admin-assets/images/dp.png' %}" alt="logo"></a>
+                                        {% endif %}
+                                        <span class="sale-tag">
+                                            {% if property.property_for == 1 %}
+                                            <span>Sale</span>
+                                            {% else %}
+                                            <span>Rent</span>
+                                            {% endif %}
+                                        </span>
+                                        <a class="property-wish" href="{% url 'accounts:login' %}"><i
+                                                class="far fa-heart"></i></a>
+                                    </div>
+                                    <div class="detail-prop">
+                                        <div class="property-sale-dis">
+                                            <h4>{{property.name}}</h4>
+                                            <p><i class="fas fa-map-marker-alt me-1"></i>{{property.address}}</p>
+                                        </div>
+                                        <div class="property-sale-feature">
+                                            <div><i class="fas fa-th-large me-2"></i>{{property.size}} {% if property.unit == 1 %}Square Feet{% else %}Square Meter{% endif %}</div>
+                                            <div><i class="fas fa-car me-2"></i>{{property.garages}}</div>
+                                            <div><i class="fas fa-bed-empty me-2"></i>{{property.bedrooms}}</div>
+                                            <div><i class="fas fa-bath me-2"></i>{{property.bathrooms}}</div>
+                                        </div>
+                                        <div class="property-handler">
+                                            <p class="price-size">Price:
+                                                {% if property.final_amount %}
+                                                <b>${{property.final_amount|floatformat:"2g"}}</b>
+                                                {% else %}
+                                                {{property.cost|floatformat:"2g"}}
+                                                {% endif %}
+                                            </p>
+                                            {% if property.available_from%}
+                                            <p>Available From:
+                                                {{property.available_from|date:'Y-m-d'}} to {{property.available_to|date:'Y-m-d'}}
+
+                                            </p>
+                                            {% endif %}
+                                        </div>
+                                        <a class="property-sale-cost" href="{% url 'frontend:property_details' property.id %}">
+                                            View Detail
+                                            <img class="ms-1" src="{% static 'admin-assets/images/arrow.png' %}" alt="arrow">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'frontend/includes/footer.html' %}
+<script>
+function GetCategory(id){
+
+    
+    let formData = new FormData();
+    // categories 
+    
+    $(".category_class:checked").each(function(){
+        formData.append("category_id",this.value)
+    })
+    // budgets 
+
+   $(".budget_class:checked").each(function(){
+            formData.append("budget_value",this.value)
+    }) 
+    //Default Filter
+
+    formData.append("sort_by",$("#default_value").val())
+
+    //range filter
+    formData.append("min-price",$("#min-price").val())
+    formData.append("max-price",$("#max-price").val())
+
+
+    $.ajax({
+        url : "{% url 'properties:property_filter' %}",
+        type:"POST",
+        data:formData,
+        processData: false,
+        contentType: false,
+        success:function(data){
+            $("#property_row").html(data.data)
+            
+        }
+    })
+    
+}
+
+function GetBudget(value){
+    if (value == 3){
+        $("#range_filter").css("display",'block')
+    }else{
+        $("#range_filter").css("display",'None')
+    }
+}
+</script>

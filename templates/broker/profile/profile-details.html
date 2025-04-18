@@ -1,0 +1,165 @@
+{% include 'broker/includes/header.html' %}
+{% load static %}
+{% load extras %}
+
+
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'broker/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'broker:broker_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Profile</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12 mx-auto">
+                            <div class="card">
+                                <div class="card-body p-0">
+                                    <div class="card-header d-flex align-items-center justify-content-between">
+                                        <h4 class="card-title">Profile Details</h4>
+                                        <a href="{% url 'broker:update_broker_profile' %}" class="edit-btn"><i
+                                                class="fa fa-fw fa-pencil me-0"></i>
+                                        </a>
+                                    </div>
+                                    <div class="sidebar-widget">
+                                        <form class="custom-form">
+                                            <div class="author-box clearfix">
+                                                <div class="profile-img-wrapper">
+                                                    {% if user.profile_pic %}
+                                                    <img src="{{user.profile_pic.url}}" alt="img">
+                                                    {% else %}
+                                                    <img src="{% static 'admin-assets/images/dp.png' %}" alt="img">
+                                                    {% endif %}
+                                                </div>
+                                                <div class="author-info">
+                                                    <h4 class="author__title">{% if user.full_name %}{{user.full_name}}{% else %}{{user.email|split_email}}{% endif %}</h4>
+                                                    <p class="author__meta">Agent of Property</p>
+                                                </div>
+                                            </div>
+                                            <div class="inner_card profile-data pt-0">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="profile-data-col">
+                                                            <small class="text-muted">First Name: </small>
+                                                            <p>{% if user.first_name %}{{user.first_name}}{% else %}-{% endif %}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="profile-data-col">
+                                                            <small class="text-muted">Last Name: </small>
+                                                            <p>{% if user.last_name %}{{user.last_name}}{% else %}-{% endif %}</p>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                   
+                                                    <div class="col-md-6">
+                                                        <div class="profile-data-col">
+                                                            <small class="text-muted">Email address: </small>
+                                                            <p>{% if user.email %}{{user.email}}{% else %}-{% endif %}</p>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="profile-data-col">
+                                                            <small class="text-muted">Contact Number: </small>
+                                                            <p>{% if user.mobile_no %}{{user.mobile_no}}{% else %}-{% endif %}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="profile-data-col">
+                                                            <small class="text-muted">Bank Name: </small>
+                                                            <p>Test Bank</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="profile-data-col">
+                                                            <small class="text-muted">Bank Account: </small>
+                                                            <p>12345678921</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="profile-data-col">
+                                                            <small class="text-muted">Address: </small>
+                                                            <p>{% if user.address %}{{user.address}}{% else %}-{% endif %}</p>
+                                                        </div>
+                                                    </div>
+                                                    {% if user.bio %}
+                                                    <div class="col-md-6">
+                                                        <div class="profile-data-col">
+                                                            <small class="text-muted">Bio</small>
+                                                            <p>{{user.bio|safe}}</p>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="location-radius">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Commision</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form">
+                    <form id="commission" onsubmit="Loader(this.id)" action="{% url 'broker:set_broker_commission' %}"
+                        method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row justify-content-center">
+                            <div class="form-group mb-3 col-md-12 required-field">
+                                <label class="form-label">Commision</label>
+                                <input type="number" placeholder="Enter Commission" name="percentage"
+                                    onkeypress="return /(Enter|[0-9])/i.test(event.key)"
+                                    value="{% if commission.percentage %}{{commission.percentage}}{% else %}{{commission}}{% endif %}" class="form-control" maxlength="4" min="0"
+                                    max="2000">
+                            </div>
+                            <div class="mt-2 col-md-12 text-end">
+                                <button class="btn btn-primary" type="submit">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'broker/includes/footer.html' %}
+
+<script>
+    $("#commission").validate({
+        rules: {
+            percentage: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                min: 1,
+                max: 100,
+                number: true
+            },
+        },
+        messages: {
+            percentage: {
+                required: "Please enter commision percentage",
+            },
+        },
+    });  
+</script>

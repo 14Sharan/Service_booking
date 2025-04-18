@@ -1,0 +1,65 @@
+{% load static %}{% load extras %}
+<div class="col-xl-3 col-lg-4 wow">
+    <div class="dashboard_menu">
+        <div class="dasboard_header">
+            <div class="dasboard_header_img">
+                
+                {% if request.user.profile_pic %}
+                <img src="{{request.user.profile_pic.url}}" alt="Thumb" class="img-fluid w-100">
+                {% else %}
+                <img src="{% static 'admin-assets/images/dp.png' %}" alt="Thumb" class="img-fluid w-100">
+                {% endif %}
+                <label for="upload"><i class="far fa-camera"></i></label>
+                <form action="{% url 'customer:update_profile_pic' %}" method="post" enctype="multipart/form-data">
+                    <input type="file" id="upload" hidden name="profile_pic" accept="image/*" onchange="this.form.submit()">
+                </form>
+            </div>
+            <h2>{% if request.user.full_name %}{{request.user.full_name}}{% else %}{{request.user.email|split_email}}{% endif %}</h2>
+        </div>
+        <ul>
+            <li>
+                <a {% if profile_details %} class="active" {% endif %} href="{% url 'customer:customer_profile' %}"><span><i class="far fa-user"></i></span>
+                    Personal Info
+                </a>
+            </li>
+            <li>
+                <a {% if wishlist %} class="active" {% endif %} href="{% url 'customer:wishlist' %}"><span><i class="far fa-heart"></i></span>
+                    Wishlist
+                </a>
+            </li>
+            <li>
+                <a {% if purchase_history %} class="active" {% endif %} href="{% url 'customer:purchase_history' %}"><span><i class="fal fa-money-bill-alt"></i></span>
+                    Purchase History
+                </a>
+            </li>
+            <li>
+                <a {% if chat %} class="active" {% endif %} href="{% url 'chat:chat_screen' %}"><span><i class="far fa-comments me-2 align-middle"></i></span>
+                   Chat
+                </a>
+            </li>
+            <li>
+                <a {% if properties_documents %} class="active" {% endif %} href="{% url 'customer:properties_documents' %}"><span><i class="fal fa-file-alt"></i></span>
+                    Properties
+                </a>
+            </li>
+            {% comment %} <li>
+                <a {% if chat %} class="active" {% endif %} href="{% url 'customer:documentations' %}"><span><i class="far fa-file"></i></span>
+                   Documentation
+                </a>
+            </li> {% endcomment %}
+            <li><a {% if change_password %}class="active"{% endif %} href="{% url 'customer:change_password' %}"><span><i class="far fa-key"></i></span>
+                    Change Password</a>
+            </li>
+            <li>
+                <a {% if delete_account %} class="active" {% endif %} href="{% url 'customer:delete_account' %}"><span><i class="fas fa-user-slash"></i></span>
+                    Delete Account
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'accounts:logout' %}"><span> <i class="fas fa-sign-out-alt"></i></span>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

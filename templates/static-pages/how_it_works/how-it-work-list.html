@@ -1,0 +1,129 @@
+{% include 'admin-includes/header.html' %}
+{% load static %}{% load extras %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'frontend:index' %}">Dashboard</a></li>
+                      
+                        <li class="breadcrumb-item"><a class="white-text" href="{% url 'static_pages:how_it_works_list' %}">Our Services</a>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-title mb-0">
+					Our Services
+				</div>
+                {% if how_it_works|length < 3 %}
+                <div class="page-btn d-flex flex-wrap">
+                    <a class="btn btn-primary" href="{% url 'static_pages:add_how_it_works' %}"><i class="fas fa-plus me-1"></i>Add Services</a>
+                </div>
+                {% endif %}
+
+            </div>
+            <div class="card-body">
+                <div class="dataview">
+                    <form onsubmit="Loader()" action="{% url 'static_pages:how_it_works_list' %}" method="GET">
+                        <div class="table-responsive ">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Created on</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <thead>
+                                    <tr class="search-row">
+                                        <td><input type="text" value="{{title}}" class="form-control" name="title" maxlength="20"></td>
+                                        <td>
+                                            <input type="text" value="{{description}}" class="form-control" name="description" maxlength="20"></td>
+                                        </td>
+                                        <td><input type="date" onkeydown="return false" value="{{created_on}}" class="position-relative form-control" onchange="this.form.submit()" name="created_on"></td>
+                                        <td><button type="submit" class="btn btn-primary">Search</button></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if how_it_works %}
+                                    {% for page in how_it_works %}
+                                    <tr>
+                                        <td class='clickable-row' data-href="{% url 'static_pages:view_how_it_works' page.id  %}">{% if page.title %}{{page.title| truncatechars_html:20}}{% endif %}</td>
+                                        <td class='clickable-row description_val' id ="description_val{{forloop.counter}}" data-href="{% url 'static_pages:view_how_it_works' page.id  %}">{% if page.description %}{{page.description|safe| truncatechars_html:50}}{% endif %}</td>
+                                        <td class='clickable-row' data-href="{% url 'static_pages:view_how_it_works' page.id  %}">
+                                            <script>
+                                                var d = ConvertDateTime("{{ page.created_on|date:'Y-m-d' }}", "{{ page.created_on|time:'H:i' }}");
+                                                document.write(d);
+                                            </script>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex">
+                                                <a href="{% url 'static_pages:edit_how_it_works' page.id  %}" class="btn btn-info shadow btn-xs sharp me-1"><i class="fa fa-edit"></i></a>
+                                                <a href="{% url 'static_pages:view_how_it_works' page.id  %}" class="btn btn-success shadow btn-xs sharp me-1"><i class="fa fa-eye"></i></a>
+                                                <a style="margin-right:5px" href="{% url 'static_pages:delete_how_it_work' page.id %}" message="Are you sure you want to delete this Service?" class="btn btn-danger shadow btn-xs sharp action_confirm" ><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                    {% if how_it_works.has_other_pages %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {% if how_it_works.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% url_replace request 'page' how_it_works.previous_page_number %}">&laquo;</a>                                          
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">&laquo;</span>
+                                </li>
+                            {% endif %}
+                            {% for i in how_it_works.paginator.page_range %}
+                                {% if how_it_works.number == i %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                                    </li>
+                                {% elif i > how_it_works.number|add:'-5' and i < how_it_works.number|add:'5' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{% url_replace request 'page' i %}">{{ i }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if how_it_works.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% url_replace request 'page' how_it_works.next_page_number %}">&raquo;</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">&raquo;</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'admin-includes/footer.html' %}
+<script>
+    $('document').ready(function(){
+        var data = $('.description_val');
+        for (i=0; i < data.length; i++){
+            new_data = data[i].innerHTML
+            var content = new_data.replace(/<img[^>]*>/g,"");
+            document.getElementById('description_val'.concat(i+1)).innerHTML=content
+        }
+
+    })
+</script>

@@ -1,0 +1,138 @@
+{% include 'customer/includes/header.html' %}
+{% load static %}
+
+<section class="page-title-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-title-wrapper text-center">
+                    <h1 class="page-title mb-10">Purchases</h1>
+                    <div class="breadcrumb-menu">
+                        <nav aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs">
+                            <ul class="trail-items">
+                                <li class="trail-item trail-begin"><a href="{% url 'customer:customer_dashboard' %}"><span>Home</span></a></li>
+                                <li class="trail-item trail-end"><span>Purchases</span></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="user_dashboard py-5">
+    <div class="container">
+        <div class="dashboard_area">
+            <div class="row">
+                {% include 'customer/includes/sidebar.html' %}
+                <div class="col-xl-9 col-lg-8 wow">
+                    <div class="dashboard_content">
+                        <div class="inner_card">
+                            <div class="db_head">
+                                <div class="db_inr_hd">
+                                    <h4>Documents</h4>
+                                </div>
+                            </div>
+                            <div class="dashboard-purchase-card">
+                                <div class="large">
+                                    <div class="column2-title">
+                                      <h1>My Properties</h1>
+                                     </div>
+                                   <hr>
+                                 </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Property Name </th>
+                                                <th>Price</th>
+                                                <th>Title Documentation</th>
+                                                <th>Contract Document</th>
+                                                <th>Date Of Purchase</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for property in properties%}
+                                            <tr>
+                                                <td>
+                                                    <a href="{% url 'customer:property_details' property.id %}" class="property-card d-flex align-items-center">
+                                                        <div class="property-img">
+                                                            {% if property.property_images.all %}
+                                                            <img src="{{property.property_images.all.first.image.url}}" alt="Thumb">
+                                                            {% else %}
+                                                            <img src="{% static 'admin-assets/images/property-1.jpg' %}" alt="Thumb">
+                                                            {% endif %}
+                                                        </div>
+
+                                                        <div class="property-dis">
+                                                            <h4> {% if property.name %}{{property.name}}{% else %}-{% endif %}</h4>
+                                                            <p> {% if property.address %}{{property.address|truncatechars:50}}{% else %}-{% endif %}</p>
+                                                        </div>
+                                                    </a>
+                                                </td>
+                                                
+                                                <td>
+                                                    {% if property.final_amount %}${{property.final_amount|floatformat:"2g"}}{% else %}-{% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if property.propertiesdocumentations_set.all %}
+                                                        {% for data in property.propertiesdocumentations_set.all %}
+                                                            {% if data.signed_document %}
+                                                                <a class="download-document" href = "{{data.signed_document.url}}" download><i style="color: #079795" class = "fa fa-download"></i></a>
+                                                            {% else %}
+                                                                --                                                         
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% else %}
+                                                       --
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if property.propertiesdocumentations_set.all %}
+                                                    {% for data in property.propertiesdocumentations_set.all %}
+                                                        {% if data.broki_fi_document %}
+                                                            <a class="download-document" href = "{{data.broki_fi_document.url}}" download ><i style="color: #079795" class = "fa fa-download"></i></a>
+                                                        {% else %}
+                                                            --                                                           
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    --
+                                                {% endif %}
+
+                                                </td>
+                                                <td>
+                                                    {% if property.propertiesdocumentations_set.all %}
+                                                    {% for data in property.propertiesdocumentations_set.all %}
+                                                        {% if data.customer_document_uploaded_on %}
+                                                        {{data.customer_document_uploaded_on|date:'Y-m-d'}}
+                                                        {% else %}
+                                                            --                                                           
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    --
+                                                {% endif %}
+                                                </td>
+                                                <td>
+                                                    <div class = "d-flex">
+                                                        <a class="btn btn-info shadow btn-xs sharp me-1" href="{% url 'customer:properties_documents_details' property.id %}"><i class="fa fa-eye"></i></a>
+                                                        <a class="btn btn-info shadow btn-xs sharp me-1" href="{% url 'accounts:users_signup' %}">Sell</i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'customer/includes/footer.html' %}

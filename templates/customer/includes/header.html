@@ -1,0 +1,203 @@
+{% load static %}
+{% load extras %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="POS - Bootstrap Admin Template">
+    <meta name="keywords"
+        content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, html5, responsive">
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Service Booking </title>
+    <link rel="shortcut icon" href="{% static 'admin-assets/images/favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static 'admin-assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.8.4/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="{% static 'admin-assets/css/flash.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/fonts/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/intlTelInput.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/static-css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/static-css/responsive.css' %}">
+</head>
+
+<body>
+    {% if messages %}
+    <div class="flash animate--drop-in-fade-out">
+        {% for message in messages %}
+        <div class="flash__icon">
+            <i class="icon far fa-check-circle"></i>st
+        </div>
+        <span class="flash__body">{{ message }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <script src="{% static 'admin-assets/js/moment.min.js' %}"></script>
+    <script>
+        function ConvertDateTime(createdate, createtime) {
+            var d = createdate + "T" + createtime + "Z";
+            const date = d;
+            const local = moment.utc(date).local().format("Do MMM YYYY hh:mm A");
+            return local;
+        }
+    </script>
+    <div class="main-wrapper main-page-header customer-header">
+        <div class="header-card">
+            <div class="container">
+                <div class="header main-head d-flex align-items-center justify-content-between">
+                    <div class="header-left active outer-header">
+                        <a href="{% url 'frontend:index' %}" class="logo logo-normal d-flex align-items-center">
+                            <img src="{% static 'admin-assets/images/' %}" alt="img">
+                        </a>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <ul class="nav user-menu d-none d-md-none d-lg-flex">
+                            <li class="nav-item dropdown d-flex align-items-center">
+                                <a href="{% url 'frontend:index' %}" class="nav-link me-2">
+                                    Home
+                                </a>
+                            </li>
+                            {% if 1|other_pages_types %}
+                            <li class="nav-item dropdown d-flex align-items-center dropdown">
+                                <a href="{% url 'frontend:index' %}" class="nav-link dropdown-toggle me-2" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                Pages
+                                </a>                              
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                
+                                {% for page in 1|other_pages_types %}
+                                  <li><a class="dropdown-item" href="{% url 'frontend:other' page.id %}">{{page.title}}</a></li>
+                                  {% endfor %}                                
+                                </ul>
+                            </li>
+                            {% endif %}
+
+                            <li class="nav-item dropdown d-flex align-items-center">
+                                <a href="{% url 'customer:properties_list' %}" class="nav-link me-2">
+                                    Properties
+                                </a>
+                            </li>
+
+                            <li class="nav-item dropdown d-flex align-items-center">
+                                <a href="{% url 'frontend:blog_list' %}" class="nav-link me-2">
+                                    Blogs
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown d-flex align-items-center">
+                                <a href="{% url 'frontend:about_us' %}" class="nav-link me-2">
+                                    About Us
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown d-flex align-items-center">
+                                <a href="{% url 'frontend:how_we_work' %}" class="nav-link me-2">
+                                    Our Services
+                                </a>
+                            </li>
+
+                            <li class="nav-item dropdown d-flex align-items-center">
+                                <a href="{% url 'frontend:contact_us' %}" class="nav-link me-2">
+                                    Contact Us
+                                </a>
+                            </li>
+                        </ul>
+                        <a class="hdr-wish-lnk me-4 ms-4" href="{% url 'customer:wishlist' %}">
+                            <i class="far fa-heart"></i>
+                            <span class="hdr-count" id='wish_count'>{{request.user.id|wishlist_count}}</span>
+                        </a>
+                        <div class="profile-drop">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="hdr-pro-view">
+                                        <span>
+                                            {% if request.user.profile_pic %}
+                                            <img src="{{request.user.profile_pic.url}}" alt="User Profile">
+                                            {% else %}
+                                            <img src="{% static 'admin-assets/images/dp.png' %}" alt="User Profile">
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <div class="profile-card-drop">
+                                        <span>
+                                            {% if request.user.profile_pic %}
+                                            <img src="{{request.user.profile_pic.url}}" alt="User Profile">
+                                            {% else %}
+                                            <img src="{% static 'admin-assets/images/dp.png' %}" alt="User Profile">
+                                            {% endif %}
+                                        </span>
+                                        <div class="profile-card-rt">
+                                            <h4 class="mb-0">{% if request.user.full_name %}{{request.user.full_name}}{% else %}{{request.user.email|split_email}}{% endif %}</h4>
+                                            <p>BUYER</p>
+                                        </div>
+                                    </div>
+                                    <li><a class="dropdown-item" href="{% url 'customer:customer_profile' %}"><i
+                                                class="far fa-user me-2 align-middle"></i>Personal Info</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'customer:wishlist' %}"><i
+                                                class="far fa-heart me-2 align-middle"></i>Wishlist</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'customer:purchase_history' %}"><i
+                                                class="fal fa-money-bill-alt me-2 align-middle"></i>Purchase History</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'customer:properties_documents' %}"><i
+                                                class="fal fa-file me-2 align-middle"></i>Properties</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'chat:chat_screen' %}"><i
+                                                class="far fa-comments me-2 align-middle"></i>Chat</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'customer:change_password' %}"><i
+                                                class="far fa-key me-2 align-middle"></i>Change Password</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'customer:delete_account' %}"><i
+                                                class="far fa-user-slash me-2 align-middle"></i>Delete Account</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'accounts:logout' %}"><i
+                                                class="fas fa-sign-out-alt me-2 align-middle"></i>Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="mobile-menu-card d-md-block d-lg-none">
+                            <div class="mobile-links">
+                                <a class="btn btn-primary bars-btn d-md-block d-lg-none ms-3" data-bs-toggle="offcanvas"
+                                    href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                                    <i class="far fa-bars"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample"
+            aria-labelledby="offcanvasExampleLabel">
+            <div class="offcanvas-body">
+                <div class="mobile-menu">
+                    <div class="sider-card">
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        <div class="side-profile-card">
+                            <span class="profile-img">
+                                {% if request.user.profile_pic %}
+                                <img src="{{request.user.profile_pic.url}}" alt="User Profile">
+                                {% else %}
+                                <img src="{% static 'admin-assets/images/dp.png' %}" alt="User Profile">
+                                {% endif %}
+                            </span>
+                            <div class="side-profile-dis">
+                                <p>Hello!</p>
+                                <h4>{% if user.full_name %}{{request.user.full_name}}{% else %}{{request.user.email|split_email}}{% endif %}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="side-bar-links">
+                        <ul class="side-link-list">
+                            <li><a href="{% url 'frontend:index' %}">Home </a></li>
+                            <li><a href="{% url 'frontend:properties_list' %}">Properties </a></li>
+                            <li><a href="{% url 'customer:customer_profile' %}">Personal Info</a></li>
+                            <li><a href="{% url 'customer:wishlist' %}">Wishlist</a></li>
+                            <li><a href="{% url 'chat:chat_screen' %}">Chat</a></li>
+                            <li><a href="{% url 'customer:change_password' %}">Change Password</a></li>
+                            <li><a href="{% url 'customer:delete_account' %}">Settings</a></li>
+                            <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="body-flex-wrapper">

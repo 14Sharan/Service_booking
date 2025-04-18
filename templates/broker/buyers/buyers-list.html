@@ -1,0 +1,220 @@
+{% include 'broker/includes/header.html' %}
+{% load static %}
+{% load extras %}
+
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'broker/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'broker:broker_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Clients Management</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12 mx-auto">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Clients Management</h4>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="sidebar-widget my-properties">
+                                      
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane active" id="home">
+                                                <div class="sidebar-widget my-properties pt-4">
+                                                    <form onsubmit="Loader()" action="" method="GET">
+                                                        <div class="table-responsive">
+                                                            <table class="table datatable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="pl-2">Buyer Name</th>
+                                                                        <th>Property</th>
+                                                                        <th>Transaction Type</th>
+                                                                        <th>Transaction Date</th>
+                                                                        <th>Action</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <thead>
+                                                                    {% comment %} <tr class="search-row">
+                                                                        <td><input type="text" value="{{name}}" class="form-control" name="name" maxlength="20"></td>
+                                                                        <td><input type="text" value="" class="form-control" name="" maxlength="20" disabled></td>
+                                                                        <td><input type="text" value="{{email}}" class="form-control" name="email" maxlength="20"></td>
+                                                                        <td><input type="text" value="{{mobile}}" class="form-control" name="mobile" maxlength="50"></td>
+                                                                        <td><button type="submit" class="theme-btn">Search</button></td>
+                                                                    </tr> {% endcomment %}
+                                                                </thead>  
+                                                                <tbody >
+                                                                    {% for user in data %}
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div class="d-flex align-items-center">
+                                                                                <div class="user-img">
+                                                                                    <a ><img alt="user" {% if user.customer.profile_pic %}src="{{user.customer.profile_pic.url}}"{% else %}src="{% static 'admin-assets/images/dp.png' %}"{% endif %}  class="img-fluid"></a>
+                                                                                </div>
+                                                                                <div class="inner ms-3">
+                                                                                    <a>
+                                                                                        <h2>{% if user.customer.full_name %}{{user.customer.full_name}}{% else %}{{user.customer.email|split_email}}{% endif %}</h2>
+                                                                                    </a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="d-flex">
+                                                                                <div class="image myelist">
+                                                                                    {% if user.property.property_images.all%}
+                                                                                    <a ><img src="{{user.property.property_images.first.image.url}}" alt="my-properties-3" class ="img-fluid"></a>
+                                                                                    {% else %}
+                                                                                    <a href=""><img
+                                                                                            alt="my-properties-3"
+                                                                                            src="{% static 'admin-assets/images/property-1.jpg' %}"
+                                                                                            class="img-fluid"></a>
+                                                                                    {% endif %}
+                                                                                </div>
+                                                                                <div class="inner ms-3">
+                                                                                    <a href="">
+                                                                                        <h2>{{user.property.name}}</h2>
+                                                                                    </a>
+                                                                                    <figure><i class="lni-map-marker"></i> {{user.property.address}}</figure>
+                                                                                    <ul class="starts text-left mb-0">
+                                                                                        <li class="mb-0"><i class="fa fa-star"></i>
+                                                                                        </li>
+                                                                                        <li class="mb-0"><i class="fa fa-star"></i>
+                                                                                        </li>
+                                                                                        <li class="mb-0"><i class="fa fa-star"></i>
+                                                                                        </li>
+                                                                                        <li class="mb-0"><i class="fa fa-star"></i>
+                                                                                        </li>
+                                                                                        <li class="mb-0"><i class="fa fa-star"></i>
+                                                                                        </li>
+                                                                                        <li class="ml-3 mb-0">(6 Reviews)</li>
+                                                                                    </ul>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td> {% if user.property.property_for == 1 %}
+                                                                            SALE
+                                                                            {% else %}
+                                                                            Lease/Renting
+                                                                            {% endif %}</td>
+                                                                        <td>{{user.created_on|date:'Y-m-d' }}</td>
+                                                                        <td><a href="{% url 'broker:view_buyers_details' user.id %}" class="theme-btn">View Details</a></td>
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>    
+                                                    </form>
+                                                </div>
+                                                {% if data.has_other_pages %}
+                                                        <nav aria-label="Page navigation">
+                                                            <ul class="pagination">
+                                                                {% if data.has_previous %}
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?{% url_replace request 'page' data.previous_page_number %}">&laquo;</a>                                          
+                                                                    </li>
+                                                                {% else %}
+                                                                    <li class="page-item disabled">
+                                                                        <span class="page-link">&laquo;</span>
+                                                                    </li>
+                                                                {% endif %}
+                                                                {% for i in data.paginator.page_range %}
+                                                                    {% if data.number == i %}
+                                                                        <li class="page-item active">
+                                                                            <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                                                                        </li>
+                                                                    {% elif i > data.number|add:'-5' and i < data.number|add:'5' %}
+                                                                        <li class="page-item">
+                                                                            <a class="page-link" href="?{% url_replace request 'page' i %}">{{ i }}</a>
+                                                                        </li>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                                {% if data.has_next %}
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?{% url_replace request 'page' new_buyers.next_page_number %}">&raquo;</a>
+                                                                    </li>
+                                                                {% else %}
+                                                                    <li class="page-item disabled">
+                                                                        <span class="page-link">&raquo;</span>
+                                                                    </li>
+                                                                {% endif %}
+                                                            </ul>
+                                                        </nav>
+                                                {% endif %}
+                                            </div>
+
+                                            
+                                        </div>  
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="copyright-footer">
+        <p class="mb-0 text-center">
+            Broki-fi
+        </p>
+    </div>
+</footer>
+</div>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+
+{% comment %} <script src="{% static 'admin-assets/js/jquery-3.6.0.min.js' %}"></script> {% endcomment %}
+<script src="{% static 'admin-assets/js/jquery.fancybox.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/swiper-js/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/script.js' %}"></script>
+<script src="{% static 'admin-assets/js/validate.js' %}"></script>
+<script src="{% static 'admin-assets/js/additional-methods.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/feather.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.slimscroll.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/intlTelInput-jquery.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/sweetalert.js' %}"></script>
+<script src="https://cdn.ckeditor.com/4.17.2/standard/ckeditor.js"></script>
+<script src="{% static 'admin-assets/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/dataTables.bootstrap4.min.js' %}"></script>
+
+<script>
+
+    $(document).ready( function () {
+        $('.datatable').DataTable({
+            "bSort": true,
+            "bPaginate": false,
+            "searching": false,
+            "bDestroy": true,
+            "bInfo" : false,
+            "aaSorting": [],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1]
+            }]
+        });
+    });
+    $(document).ready(function(){
+        $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
+        });
+        var activeTab = localStorage.getItem('activeTab');
+        if(activeTab){
+            $('#myTab a[href="' + activeTab + '"]').tab('show');
+        }
+    });
+</script>

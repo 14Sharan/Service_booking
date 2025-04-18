@@ -1,0 +1,135 @@
+{% load static %}
+{% load extras %}
+<footer>
+    <section class="footer-card pt-5">
+        <div class="container">
+            <div class="footer-card-inr">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="footer-details mb-4">
+                            <a href="{% url 'frontend:index' %}" class="footer-logo">
+                                <img src="{% static 'admin-assets/images/bro.png' %}" alt="logo">
+                            </a>
+                        </div>
+                        <div class="ftr-social mb-3">
+                            <ul>{% socialmedia_url_check "facebook_url" as facebook %}
+                                {% if facebook %}
+                                <li>
+                                    <a href="{{facebook}}">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% socialmedia_url_check "instagram_url" as instagram %}
+                                {% if instagram %}
+                                <li>
+                                    <a href="{{instagram}}">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% socialmedia_url_check "linkedin_url" as linkedin %}
+                                {% if linkedin %}
+                                <li>
+                                    <a href="{{linkedin}}">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% socialmedia_url_check "twitter_url" as twitter %}
+                                {% if twitter %}
+                                <li>
+                                    <a href="{{twitter}}">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="ftr-dis mb-4">
+                            {% socialmedia_url_check "footer_text" as footer %}
+                            {% if footer %}
+                            <p>
+                                {{footer|safe}}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="footer-link">
+                            <div class="ftr-hd">
+                                <h4>Quick Links</h4>
+                            </div>
+                            <ul class="ftr-links">
+                                <li><a href="{% url 'frontend:index' %}">Home</a></li>
+                                <li><a href="{% url 'frontend:about_us' %}">About Us</a></li>
+                                <li><a href="{% url 'frontend:index' %}#faq-section">FAQs</a></li>
+                                <li><a href="{% url 'frontend:privacy_policy' %}">Privacy Policy</a></li>
+                                <li><a href="{% url 'frontend:terms_view' %}">Terms & Conditions</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="footer-link">
+                            <div class="ftr-hd">
+                                <h4>Services</h4>
+                            </div>
+                            <ul class="ftr-links">
+                                <li><a href="javascript:void(0);">Buy Properties</a></li>
+                                <li><a href="javascript:void(0);">Sell Properties</a></li>
+                                <li><a href="javascript:void(0);">View Properties</a></li>
+                                <li><a href="javascript:void(0);">Live Chat</a></li>
+                                <li><a href="{% url 'frontend:blog_list' %}">Blogs</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="footer-addrs">
+                            <div class="ftr-hd">
+                                <h4>Contact</h4>
+                            </div>
+                            <div class="ftr-addrs-card">
+                                <p><span><i class="far fa-map-marker-alt"></i></span>
+                                    {% contact_details 'address' as addr %}
+                                    {% if addr %}
+                                    {{addr}}
+                                    {% else %}--
+                                    {% endif %}
+                                </p>
+                                <p><span><i class="far fa-mobile"></i></span>
+                                    {% contact_details 'number' as contact_no %}
+                                    {% for contact in contact_no %}
+                                        {{contact.country_code}} {{contact.mobile_no}}<br>
+                                    {% endfor %} 
+                                </p><br>
+                                <p><span><i class="far fa-envelope"></i></span>
+                                    {% contact_details 'email' as email %}
+                                    {{email}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright-card">
+                <p>Copyright © 2023 BROKI-FI | All Rights Reserved.</p>
+            </div>
+        </div>
+    </section>
+</footer>
+</div>
+<script src="{% static 'admin-assets/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.fancybox.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/swiper-js/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/script.js' %}"></script>
+<script src="{% static 'admin-assets/js/validate.js' %}"></script>
+<script src="{% static 'admin-assets/js/additional-methods.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/feather.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/intlTelInput-jquery.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/dashbaord.js' %}"></script>
+<script src="{% static 'admin-assets/js/sweetalert.js' %}"></script>
+<script src="{% static 'admin-assets/js/ckeditor-validation.js' %}"></script>
+<script src="https://cdn.ckeditor.com/4.17.2/standard/ckeditor.js"></script>
+</body>
+</html>

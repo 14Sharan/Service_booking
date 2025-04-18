@@ -1,0 +1,42 @@
+{% load static %}
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<footer style='color:#000'>
+    <div class="copyright-footer" style='background:none'>
+        <p class="mb-0 text-center">
+        </p>
+    </div>
+</footer> 
+
+<script src="{% static 'admin-assets/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.fancybox.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/feather.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.slimscroll.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/script.js' %}"></script>
+<script src="{% static 'admin-assets/js/validate.js' %}"></script>
+<script src="{% static 'admin-assets/js/additional-methods.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/intlTelInput-jquery.min.js' %}"></script>
+<script>
+    function Loader(formID) {
+        if ($('#'+formID).length){
+            if ($('#'+formID).valid()){
+                $('body').append('<div id="loading"><i class="fas fa-spinner"></i></div>');
+                $('body').css('pointer-events','none');
+                $('.btn').css('pointer-events','none');
+            }
+        }else{
+            $('body').append('<div id="loading"><i class="fas fa-spinner"></i></div>');
+            $('body').css('pointer-events','none');
+            $('.btn').css('pointer-events','none');
+        }
+    }
+</script>
+</body>
+</html>

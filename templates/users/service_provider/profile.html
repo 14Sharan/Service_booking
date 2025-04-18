@@ -1,0 +1,144 @@
+{% include "admin-includes/header.html" %}{% load static %}{% load extras %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <h4>Service Providers Information</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'accounts:index' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a class="white-text" href="{% url 'superuser:service_providers_list' %}">Service Providers</a></li>
+                        <li class="breadcrumb-item active">Profile</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="page-btn d-flex flex-wrap">
+                {% comment %} <a class="btn btn-primary me-2" href="" ><i class="fa fa-bell"></i> Notifications</a>
+                <a class="btn btn-primary me-2" href="" ><i class="fa fa-edit me-1"></i> Update</a> {% endcomment %}
+                <a class="btn btn-secondary" href="{% url 'superuser:service_providers_list' %}" ><i class="fa fa-angle-left me-1"></i> Back</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mt-3">
+                <div class="card product-profile-wrapper">
+                    <div class="product-detail-wrapper">
+                        <div class="profile-imgbox">
+                            {% if user.profile_pic %}
+                            <a class="product-img" href="{{ user.profile_pic.url }}" data-fancybox="gallery">
+                                <img style="height: auto;" src="{{ user.profile_pic.url }}" alt="image">
+                            </a>
+                            {% else %}
+                            <a class="product-img" href="{% static 'admin-assets/images/dp.png' %}" data-fancybox="gallery">
+                                <img style="height: auto;" src="{% static 'admin-assets/images/dp.png' %}" alt="image">
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 productdetails">
+                                <ul class="product-bar">
+                                    <li>
+                                        <h4>User Id </h4>
+                                        <h6>{% if user.id %}{{user.id}}{% else %}-{% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Full Name </h4>
+                                        <h6>{% if user.full_name %}{{user.full_name}}{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Email </h4>
+                                        <h6>{% if user.email %}<b>{{user.email}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Mobile Number </h4>
+                                        <h6>{% if user.mobile_no %}<b>{% if user.country_code %}{{user.country_code}}{% endif %}{{user.mobile_no}}</b>{% else %} -- {% endif %}</h6>
+                                    </li>
+                                    <li>
+                                        <h4>Address</h4>
+                                        <h6>
+                                            {% if user.address %}
+                                                {{user.address}}   
+                                            {% else %}--{% endif%}                                  
+                                        </h6>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6 productdetails">
+                                <ul class="product-bar">
+                                    <li>
+                                        <h4>Role</h4>
+                                        <h6>
+                                            <span class="badge bg-primary">
+                                            {% if user.role_id == 1 %} ADMIN
+                                            {% elif user.role_id == 2 %}SERVICE PROVIDER
+                                            {% elif user.role_id == 3 %}USER
+                                            {% endif %}
+                                            </span>
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h4>Profile Status</h4>
+                                        <h6>
+                                            {% if verification_status == 1 %}
+                                            <span class="badge bg-warning">PENDING</span>
+                                            {% elif verification_status == 2 %}
+                                            <span class="badge bg-success">VERIFIED</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">REJECTED</span>
+                                            {% endif %}
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h4>Document</h4>
+                                        <h6 style="padding: 5px;">
+                                            {% if service_provider_info.document_file %}
+                                                <a href="{{ service_provider_info.document_file.url }}" download><i class="fa fa-download"></i></a>
+                                            {% else %}
+                                                <span>No document added yet</span>
+                                            {% endif %}
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h4>Created On </h4>
+                                        <h6>
+                                            <script>
+                                                var date = ConvertDateTime("{{ user.created_on|date:'Y-m-d' }}", "{{ user.created_on|time:'H:i' }}");
+                                                document.write(date);
+                                            </script>
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h4>Last Login </h4>
+                                        <h6>
+                                            {% if user.last_login %}
+                                            <script>
+                                                var date = ConvertDateTime("{{ user.last_login|date:'Y-m-d' }}", "{{ user.last_login|time:'H:i' }}");
+                                                document.write(date);
+                                            </script>
+                                            {% else %}--{% endif %}
+                                        </h6>
+                                    </li>
+                                    <li>
+                                        <h4>Rating</h4>
+                                        <h6 style="padding: 5px;">
+                                            <div class="stars" style="--rating: {% if user.average_rating %}{{user.average_rating}}{% else %}0{% endif %};"></div>
+                                        </h6>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="btn-list border-0 d-flex justify-content-end align-items-center mt-4">
+
+                                <a href="{% url 'superuser:verfiy_service_provider_profile' user.id %}" onclick="Loader()" class="btn btn-success ms-2">VERIFY PROFILE</a>
+                                <a href="{% url 'superuser:reject_service_provider_profile' user.id %}" onclick="Loader()" class="btn btn-danger ms-2">REJECT PROFILE</a>
+
+                              
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "admin-includes/footer.html" %}

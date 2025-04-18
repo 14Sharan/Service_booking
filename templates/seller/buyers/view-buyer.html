@@ -1,0 +1,211 @@
+{% include 'seller/includes/header.html' %}
+{% load static %}
+{% load extras %}
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'seller/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'seller:seller_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Buyer Detail</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12 mx-auto">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between">
+                                    <h4 class="card-title">Buyer Detail</h4>
+                                    <a class="btn theme-btn btn-sm" href="{% url 'seller:buyers_list' %}" ><i class="fa fa-angle-left me-1"></i> Back</a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="sidebar-widget my-properties ">
+                                        <div class="row">
+                                            <div class="col-md-9 mx-auto">
+                                                <div class="news-item news-item-sm d-flex p-4">
+                                                    <a href="#" class="news-img-link">
+                                                        <div class="news-item-img homes" style="cursor:auto">
+                                                            <img  class="crmimg" {% if user.profile_pic %}src="{{user.profile_pic.url}}"{% else %}src="{% static 'admin-assets/images/dp.png' %}"{% endif %}  alt="image">
+                                                        </div>
+                                                    </a>
+                                                    <div class="news-item-text pt-0">
+                                                        <h3>{% if user.full_name %}{{user.full_name|capfirst}}{% else %}{{user.email|split_email|capfirst}}{% endif %}</h3> 
+                                                        <div class="the-agents">
+                                                            <ul class="the-agents-details mt-2 mb-0">
+                                                                <li><a><b>Mobile:</b>&nbsp;&nbsp; {% if user.mobile_no %}{{user.mobile_no}}{% else %}-{% endif %}</a></li>
+                                                                <li><a><b>Transaction Type:</b>&nbsp;&nbsp; Sales and Lease/Renting</a></li>
+                                                                <li><a><b>Transaction Date:</b>&nbsp;&nbsp; 2023-10-20</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% comment %} <div class="card-body">
+                                    <div class="sidebar-widget my-properties ">
+                                        <div class="row">
+                                            <div class="col-md-9 mx-auto">
+                                                <div class="news-item news-item-sm">
+                                                    <a href="#" class="news-img-link">
+                                                        <div class="news-item-img homes">
+                                                            <div class="homes-tag button alt featured">4 Properties</div>
+                                                            <img  class="crmimg" src="{% static 'admin-assets/images/dp.png' %}" alt="image">
+                                                        </div>
+                                                    </a>
+                                                    <div class="news-item-text">
+                                                        <a href="agent-details.html"><h3>{% if user.full_name %}{{user.full_name}}{% else %}{{user.email|split_email}}{% endif %}</h3></a> 
+                                                        <div class="the-agents">
+                                                            <ul class="the-agents-details">
+                                                                <li><a >Mobile: {% if user.mobile_no %}{{user.mobile_no}}{% else %}-{% endif %}</a></li>
+                                                                <li><a >Email: {{user.email}}</a></li>
+                                                            </ul>
+                                                            <div class="news-item-bottom">
+                                                                <a href="" class="news-link">View My Properties</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card mt-4 border-1">
+                                                <div class="card-header p-0 border-0">
+                                                    <h5 class="card-header p-0 pb-3 mb-0">Query</h5>
+                                                </div>
+                                                <div class="card-body p-0">
+                                                    <div class="blog-info details mb-30">
+                                                        <p class="mb-3">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum rerum beatae consequatur, totam fugit, alias fuga aliquam quod tempora a nisi esse magnam nulla quas! Error praesentium, vero dolorum laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum rerum beatae consequatur, totam.</p>
+                                                        <a class="link" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                                            <i class="fas fa-redo-alt me-1 align-middle"></i> Reply
+                                                            </a>
+                                                            <div class="collapse" id="collapseExample">
+                                                            <form>
+                                                                <div class="col-md-12 form-group mt-3">
+                                                                    <textarea class="form-control" id="exampleTextarea" rows="8" placeholder="Reply" required=""></textarea>
+                                                                </div>
+                                                                <div class="text-end mt-3">
+                                                                    <button type="submit" class="btn theme-btn">
+                                                                        Submit
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card mt-4 border-1">
+                                                <div class="card-header">
+                                                    <h4 class="card-title">Buy Properties List</h4>
+                                                </div>
+                                                <div class="card-body p-0">
+                                                    <div class="row">
+                                                        <div class="col-xxl-4 col-md-6">
+                                                            <div class="property-sale-card">
+                                                                <div class="property-sale-img">
+                                                                    <img src="{% static 'admin-assets/images/dp.png' %}" alt="logo">
+                                                                    <span class="sale-tag">Sale</span>
+                                                                </div>
+                                                                <div class="property-sale-dis">
+                                                                    <h4>1963 S Crescent Heights Blvd</h4>
+                                                                    <p><i class="fas fa-map-marker-alt me-1"></i> Beverly Hills, CA 90210</p>
+                                                                </div>
+                                                                <div class="property-sale-feature">
+                                                                        <div><i class="fas fa-th-large me-2"></i>2400 Square Feet</div>
+                                                                        <div><i class="fas fa-car me-2"></i>2 Garages</div>
+                                                                        <div><i class="fas fa-bed-empty me-2"></i>20 Bedrooms</div>
+                                                                        <div><i class="fas fa-bath me-2"></i>8 Bathrooms</div>
+                                                                </div>
+                                                                <div class="property-handler">
+                                                                    <p><i class="fas fa-user me-1 "></i> Michel Smith</p>
+                                                                    <p><i class="far fa-clock me-1"></i>1 days ago</p>
+                                                                </div>
+                                                                <a class="property-sale-cost" href="javascript:void(0);">
+                                                                    View Detail
+                                                                    <img class="ms-1" src="{% static 'admin-assets/images/arrow.png' %}" alt="arrow">
+                                                                </a>
+                                        
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xxl-4 col-md-6">
+                                                            <div class="property-sale-card">
+                                                                <div class="property-sale-img">
+                                                                    <img src="{% static 'admin-assets/images/propert-main-1.png' %}" alt="logo">
+                                                                    <span class="sale-tag">Sale</span>
+                                                                </div>
+                                                                <div class="property-sale-dis">
+                                                                    <h4>1963 S Crescent Heights Blvd</h4>
+                                                                    <p><i class="fas fa-map-marker-alt me-1"></i> Beverly Hills, CA 90210</p>
+                                                                </div>
+                                                                <div class="property-sale-feature">
+                                                                        <div><i class="fas fa-th-large me-2"></i>2400 Square Feet</div>
+                                                                        <div><i class="fas fa-car me-2"></i>2 Garages</div>
+                                                                        <div><i class="fas fa-bed-empty me-2"></i>20 Bedrooms</div>
+                                                                        <div><i class="fas fa-bath me-2"></i>8 Bathrooms</div>
+                                                                </div>
+                                                                <div class="property-handler">
+                                                                    <p><i class="fas fa-user me-1 "></i> Michel Smith</p>
+                                                                    <p><i class="far fa-clock me-1"></i>1 days ago</p>
+                                                                </div>
+                                                                <a class="property-sale-cost" href="javascript:void(0);">
+                                                                    View Detail
+                                                                    <img class="ms-1" src="{% static 'admin-assets/images/arrow.png' %}" alt="arrow">
+                                                                </a>
+                                        
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xxl-4 col-md-6">
+                                                            <div class="property-sale-card">
+                                                                <div class="property-sale-img">
+                                                                    <img src="{% static 'admin-assets/images/propert-main-1.png' %}" alt="logo">
+                                                                    <span class="sale-tag">Sale</span>
+                                                                </div>
+                                                                <div class="property-sale-dis">
+                                                                    <h4>1963 S Crescent Heights Blvd</h4>
+                                                                    <p><i class="fas fa-map-marker-alt me-1"></i> Beverly Hills, CA 90210</p>
+                                                                </div>
+                                                                <div class="property-sale-feature">
+                                                                        <div><i class="fas fa-th-large me-2"></i>2400 Square Feet</div>
+                                                                        <div><i class="fas fa-car me-2"></i>2 Garages</div>
+                                                                        <div><i class="fas fa-bed-empty me-2"></i>20 Bedrooms</div>
+                                                                        <div><i class="fas fa-bath me-2"></i>8 Bathrooms</div>
+                                                                </div>
+                                                                <div class="property-handler">
+                                                                    <p><i class="fas fa-user me-1 "></i> Michel Smith</p>
+                                                                    <p><i class="far fa-clock me-1"></i>1 days ago</p>
+                                                                </div>
+                                                                <a class="property-sale-cost" href="javascript:void(0);">
+                                                                    View Detail
+                                                                    <img class="ms-1" src="{% static 'admin-assets/images/arrow.png' %}" alt="arrow">
+                                                                </a>
+                                        
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                        </div>
+                                    </div>
+                                </div> {% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+{% include 'seller/includes/footer.html' %}

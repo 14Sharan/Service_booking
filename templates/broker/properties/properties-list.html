@@ -1,0 +1,277 @@
+{% include 'broker/includes/header.html' %}
+{% load static %}
+{% load extras %}
+
+
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 pl-0 pr-0 user-dash">
+                {% include 'broker/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'broker:broker_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Property List</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form class="custom-form">
+                                <div class="card mb-4">
+                                    <div class="card-header d-flex align-items-center justify-content-between flex-wrap">
+                                        <h4 class="card-title me-2">My Properties</h4>
+                                        <div class="card-header-right d-flex  broker-search-frm">
+                                            <div class="serach-frm">
+
+                                                <form action = "{% url 'broker:properties_list' %}" onsubmit="return CheckAddress(this.id)" method = "GET">
+                                                    <div class="row justify-content-end">
+                                                        <div class="col-xl-5 col-lg-12 col-md-6">
+                                                            <div class="row">
+                                                                <div class="col-xl-6 col-lg-6 col-md-6">
+                                                                    <div class="form-group serch-frm-card mb-2 mt-2">
+                                                                        <input type="text" class="form-control" placeholder="Location" name = "address" id="address" value ="{{address}}">
+                                                                        <input type="hidden" name="latitude" id="latitude" >
+                                                                        <input type="hidden" name="longitude" id="longitude">
+                                                                        <i class="fas fa-map-marker-alt"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xl-6 col-lg-6 col-md-6">
+                                                                    <div class="form-group serch-frm-card mb-2 mt-2">
+                                                                        <select class="form-control" name="type" value ="{{type}}" onchange="this.form.submit()">
+                                                                            <option value="">Select Type</option>
+                                                                            <option {% if type == '1' %} selected {% endif %}  value="1">SALE</option>
+                                                                            <option {% if type == '2' %} selected {% endif %}  value="2">RENT</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xl-2 col-lg-6 col-md-6">
+                                                            <div class="form-group serch-frm-card mb-2 mt-2">
+                                                                <input type="text" class="form-control" placeholder="Budget" onkeypress="return /(Enter|[0-9.])/i.test(event.key)" name = 'cost' id="cost" value = "{{cost}}">
+                                                                <i class="fas fa-dollar-sign"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-xl-4">
+                                                            <div class=" d-flex align-item-center">
+                                                                <button type="submit" class="theme-btn btn-default mb-2 mt-2 me-2"><i class="far fa-search"></i></button>
+                                                      
+                                                                <a class="theme-btn  btn-default  mb-2 mt-2 me-2" href="{% url 'broker:properties_list' %}"><i  style="color:#fff;" class="far fa-undo me-1"></i></a>
+                                                                <a href="{% url 'broker:add_property' %}" class="theme-btn  mb-2 mt-2">Add Property
+                                                                </a>
+                                                            </div>
+                                                         
+                                                        </div>
+                                                       
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body px-0">
+                                        <div class="sidebar-widget property-form-group">
+                                            <div class="row">
+                                            {% if properties %}
+                                                {% for i in properties %}
+                                                <div class="col-xxl-4 col-md-6 mt-4">
+                                                    <div class="property-sale-card">
+                                                        <div class="property-sale-img">
+                                                            {% if i.broker != request.user %}
+                                                            <div class="share-wrapper">
+                                                            <input type="hidden" id="url_link-{{i.id}}" value="{% url_link  request i.id  %}?id={{request.user.id}}&property={{i.id}}">
+                                                                <a class="share" link_id="toggle-links-{{i.id}}" id="copy-link{{i.id}}" data-bs-placement="right" data-bs-title="Copy To Clipboard" onmouseout="ResetLinkTooltip()" onclick="CopyLink('{% url_link  request i.id  %}?id={{request.user.id}}&property={{i.id}}','{{i.id}}')">
+                                                                    <i class="far fa-share-square "></i>
+                                                                </a>
+                                                                <ul class="social" id="toggle-links-{{i.id}}" >
+                                                                    <li><a href="https://www.facebook.com/" target="_blank" title="facebook"><i class="fab fa-facebook facebook"></i></a></li>
+                                                                    <li><a href="https://twitter.com/" target="_blank" title="twitter"><i class="fab fa-twitter twitter"></i></a>
+                                                                    </li>
+                                                                    <li><a href="https://web.whatsapp.com/" target="_blank" title="google"><i class="fab fa-whatsapp whatsapp"></i></a></li>
+                                                                    <li><a href="https://www.gmail.com/" target="_blank" title="google"><i class="fas fa-envelope google"></i></a></li>
+                                                                    <li><a href="https://www.instagram.com/" target="_blank" title="google"><i class="fab fa-instagram-square instagram"></i></a></li>
+                                            
+                                                                </ul>
+                                                            </div>
+                                                            {% endif %}
+                                                            <div class="earn-card">
+                                                                <span class="earn-perc">
+                                                                    <h6 class="mb-1"> Earn</h6>
+                                                                    {% comment %} {% if property_shared %}
+                                                                        {% for property in property_shared %}
+                                                                            {% if i.id == property.property.id and property.shared_by == request.user%}
+                                                                            <h5 class="mb-1">{% if property.commission_percentage %}{{property.commission_percentage}}<span class="percentage-symbol">%</span>{% else %}{{commission}}%{% endif %}
+                                                                            </h5>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    {% else %} {% endcomment %}
+                                                                    <h5 class="mb-1">{% if i.broker_commission_percentage %}{{i.broker_commission_percentage}}<span class="percentage-symbol">%</span>{% else %}{{commission}}%{% endif %}
+                                                                    </h5>
+                                                                    {% comment %} {% endif %} {% endcomment %}
+                                                                       
+                                                                </span>
+                                                            </div>
+                                                        {% if i.property_images.all%}
+                                                        <a href="{% url 'broker:property_details' i.id %}"><img src="{{i.property_images.first.image.url}}" alt="logo"></a>
+                                                        {% else %}
+                                                        <a href="{% url 'broker:property_details' i.id %}"><img src="{% static 'admin-assets/images/dp.png' %}" alt="logo"></a>
+                                                        {% endif %}
+                                                            <span class="sale-tag">
+                                                            {% if i.property_for == 1 %}
+                                                            <span>Sale</span>
+                                                            {% else %}
+                                                            <span>Rent</span>
+                                                            {% endif %}
+                                                            </span>
+                                                            {% if i.broker == request.user %}
+                                                            <div class="prop-rt-link">
+                                                                <a href="{% url 'broker:update_property' i.id %}">
+                                                                    <i class="far fa-pencil"></i>
+                                                                </a>
+                                                                 <a style="margin-right:5px" href="{% url 'broker:delete_property' i.id %}" message="Are you sure you want to delete this property?" class="delete-prop action_confirm" ><i class="fa fa-trash"></i>
+                                                                 </a>
+    
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+
+                                                        <div class="property-sale-dis">
+                                                            <h4>{% if i.name %}{{i.name}}{% else %}-{% endif %}</h4>
+                                                            <p><i class="fas fa-map-marker-alt me-1"></i>{% if i.address %}{{i.address}}{% else %}-{% endif %}</p>
+                                                        </div>
+
+                                                        <div class="property-sale-feature">
+                                                                <div><i class="fas fa-th-large me-2"></i>{{i.size}} {% if i.unit == 1 %}Square Feet{% else %}Square Meter{% endif %}</div>
+                                                                <div><i class="fas fa-car me-2"></i>{{i.garages}} Garages</div>
+                                                                <div><i class="fas fa-bed-empty me-2"></i>{{i.bedrooms}} Bedrooms</div>
+                                                                <div><i class="fas fa-bath me-2"></i>{{i.bathrooms}} Bathrooms</div>
+                                                        </div>
+                                                        <div class="property-handler">
+                                                            <p class="price-size">Price:
+                                                                {% if i.final_amount %}
+                                                                <b>${{i.final_amount|floatformat:"2g"}}</b><p>
+                                                                {% else %}
+                                                                <b>${{i.cost|floatformat:"2g"}}</b><p>
+                                                                {% endif %}
+
+                                                            {% if i.available_from %}
+                                                            <p>Available From:
+                                                                {{i.available_from|date:'Y-m-d'}} to {{i.available_to|date:'Y-m-d'}}
+                                                            </p>
+                                                            {% endif %}
+                                                        </div>
+                                                        <a class="property-sale-cost" href="{% url 'broker:property_details' i.id %}">
+                                                           View Detail
+                                                            <img class="ms-1" src="{% static 'admin-assets/images/arrow.png' %}" alt="arrow">
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            {% else %} 
+                                            <div class='text-center'>
+                                            <img src="{% static 'admin-assets/images/no-data.png' %}">
+                                            <h6>No Properties Added Yet.</h6>
+                                            </div>
+                                            {% endif %} 
+                                           </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        {% if properties.has_other_pages %}
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                {% if properties.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="?{% url_replace request 'page' properties.previous_page_number %}">&laquo;</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">&laquo;</span>
+                                </li>
+                                {% endif %}
+                                {% for i in properties.paginator.page_range %}
+                                {% if properties.number == i %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                                </li>
+                                {% elif i > properties.number|add:'-5' and i < properties.number|add:'5' %} <li class="page-item">
+                                    <a class="page-link" href="?{% url_replace request 'page' i %}">{{ i }}</a>
+                                    </li>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% if properties.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                            href="?{% url_replace request 'page' properties.next_page_number %}">&raquo;</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">&raquo;</span>
+                                    </li>
+                                    {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'broker/includes/footer.html' %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_PLACES_KEY}}&libraries=places&callback=CheckAddress" async defer></script>
+<script>
+    $("#address").keyup(function () {
+        var autocomplete = new google.maps.places.Autocomplete($("#address")[0], {});
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var place = autocomplete.getPlace();
+            $('#latitude').val(place.geometry.location.lat())
+            $('#longitude').val(place.geometry.location.lng())
+        });
+    });
+
+    $( "#book" ).on( "load", function() {
+  // Handler for `load` called.
+} );
+
+function CheckAddress(formID) {
+        if ($('#' + formID).length) {
+            if ($('#' + formID).valid()) {
+                if ($('#latitude').val() == "" && $('#longitude').val() == "") {
+                    $('.' + formID + '-error').text("Please enter a valid location")
+                    return false;
+                }
+                else {
+                    $('.' + formID + '-error').text("")
+                    Loader(formID);
+                    return true;
+                }
+            }
+        }
+    }
+    
+</script>
+
+
+<script>
+    function share(object) {
+        document.getElementById($(object).attr('id')).classList.toggle("active");
+        let toggle_id = $(object).attr("link_id")
+        document.getElementById(toggle_id).classList.toggle("active");
+    }
+    $('.share').click(function(){
+        share(this)
+    })
+    function CopyLink(link,id){
+        navigator.clipboard.writeText(link);
+        document.execCommand("copy");
+        let val = $(this).attr('id')
+        $('#copy-link'+id).attr("data-bs-original-title", "Copied!").tooltip('show');
+    }
+    function ResetLinkTooltip(){
+        $('#copy-link').attr("data-bs-original-title", "Copy To Clipboard");
+    }
+</script>

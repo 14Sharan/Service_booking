@@ -1,0 +1,105 @@
+{% include 'broker/includes/header.html' %}
+{% load static %}
+{% load extras %}
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'broker/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'broker:broker_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">CRM Detail</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12 mx-auto">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between">
+                                    <h4 class="card-title">CRM Details </h4>
+                                    <a class="btn theme-btn btn-sm" href="{% url 'broker:buyers_list' %}" ><i class="fa fa-angle-left me-1"></i> Back</a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="sidebar-widget my-properties ">
+                                        <div class="row">
+                                            <div class="col-md-9 mx-auto">
+                                                <div class="news-item news-item-sm d-flex p-4">
+                                                    <a href="#" class="news-img-link">
+                                                        <div class="news-item-img homes" style="cursor: auto">
+                                                            <img class="crmimg" {% if crm.created_by.profile_pic %}src="{{crm.created_by.profile_pic.url}}"{% else %}src="{% static 'admin-assets/images/dp.png' %}"{% endif %}  alt="image">
+                                                        </div>
+                                                    </a>
+                                                    <div class="news-item-text pt-0">
+                                                        <h3>{% if crm.created_by.full_name %}{{crm.created_by.full_name|capfirst}}{% else %}{{crm.created_by.email|split_email|capfirst}}{% endif %}</h3>
+                                                        <div class="the-agents">
+                                                            <ul class="the-agents-details mt-2 mb-0">
+                                                                <li><a><b>Mobile:</b>&nbsp;&nbsp; {% if crm.created_by.mobile_no %}{{crm.created_by.mobile_no}}{% else %}-{% endif %}</a></li>
+                                                                <li><a><b>Email:</b>&nbsp;&nbsp; {{crm.created_by.email}}</a></li>
+                                                                <li><a><b>Created On :</b>&nbsp;&nbsp; 
+                                                                    <script>
+                                                                    var date = ConvertDateTime("{{ crm.updated_on|date:'Y-m-d' }}", "{{ crm.updated_on|time:'H:i' }}");
+                                                                    document.write(date);
+                                                                     </script>
+                                                            </a></li>
+                                                                
+                                                                <li><a><b>Searched For:</b>&nbsp;&nbsp;</a></li>
+                                                            </ul>
+                                                            {% if crm.location_hsitory %}
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend h-100">
+                                                                  <span class="input-group-text" id="basic-addon1">Property Location</span>
+                                                                </div>
+                                                                <div class="form-control">
+                                                                    {{crm.location_hsitory}}
+                                                                </div>
+                                                            </div>
+                                                            {% endif %}
+
+                                                            {% if crm.cost_hsitory %}
+
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend h-100">
+                                                                  <span class="input-group-text" id="basic-addon1">Property Cost</span>
+                                                                </div>
+                                                                <div class="form-control">
+                                                                    ${{crm.cost_hsitory}}
+                                                                </div>
+                                                            </div>
+                                                            {% endif %}
+
+                                                            {% if crm.type_hsitory %}
+                                                            <div class="input-group mb-3">
+                                                                <div class="input-group-prepend h-100">
+                                                                  <span class="input-group-text" id="basic-addon1">Property Type</span>
+                                                                </div>
+                                                                <div class="form-control">
+                                                                    {% if crm.type_hsitory == 1%}
+                                                                    RENT
+                                                                    {% else %}
+                                                                    SALE
+
+                                                                    {% endif %}
+                                                                
+                                                                </div>
+                                                            </div>
+                                                            {% endif %}
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'broker/includes/footer.html' %}

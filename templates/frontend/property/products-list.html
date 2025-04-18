@@ -1,0 +1,54 @@
+{% load static %}
+{% load extras %}
+{% load humanize %}
+
+{% for property in properties%}
+    <div class="col-lg-4 mt-4 proListItem">
+        <div class="property-sale-card">                                
+            <div class="property-sale-img">
+                {% if property.property_images.all%}
+                <a href="{% url 'frontend:property_details' property.id %}"><img src="{{property.property_images.first.image.url}}" alt="logo"></a>
+                {% else %}
+                <a href="{% url 'frontend:property_details' property.id %}"><img src="{% static 'admin-assets/images/dp.png' %}" alt="logo"></a>
+                {% endif %}
+                
+                <span class="sale-tag">
+                    {% if property.property_for == 1 %}
+                    <span>Sale</span>
+                    {% else %}
+                    <span>Rent</span>
+                    {% endif %}
+                    
+                    </span>
+                <a class="property-wish" href="{% url 'accounts:login' %}"><i
+                        class="far fa-heart"></i></a>
+            </div>
+            <div class="detail-prop">
+                <div class="property-sale-dis">
+                    <h4>{% if property.name %}{{property.name}}{% else %}-{% endif  %}</h4>
+                    <p><i class="fas fa-map-marker-alt me-1"></i>{{property.address}}</p>
+                </div>
+                <div class="property-sale-feature">
+                    <div><i class="fas fa-th-large me-2"></i>{{property.size}} {% if property.unit == 1 %}Square Feet{% else %}Square Meter{% endif %}</div>
+                    <div><i class="fas fa-car me-2"></i>{% if property.garages %}{{property.garages}}{% else %}-{% endif %}</div>
+                    <div><i class="fas fa-bed-empty me-2"></i>{% if property.bedrooms %}{{property.bedrooms}}{% else %}-{% endif %}</div>
+                    <div><i class="fas fa-bath me-2"></i>{% if property.bathrooms %}{{property.bathrooms}}{% else %}-{% endif %}</div>
+                </div>
+                <div class="property-handler">
+                    <p class="price-size">Price:
+                        <b>${{property.final_amount|floatformat:"2g"}}</b>
+                    </p>
+                    {% if property.available_from %}
+                    <p>Available From:
+                        {{property.available_from|date:'Y-m-d'}} to {{property.available_to|date:'Y-m-d'}}
+                    </p>
+                    {% endif %}  
+                </div>
+                <a class="property-sale-cost" href="{% url 'frontend:property_details' property.id %}">
+                    View Detail
+                    <img class="ms-1" src="{% static 'admin-assets/images/arrow.png' %}" alt="arrow">
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}

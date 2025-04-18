@@ -131,18 +131,22 @@ SWAGGER_SETTINGS={
             'name': 'Authorization'
         }
     },
+    "USE_SESSION_AUTH": False,
     "PERSIST_AUTH":True
 }
 
+
 REST_FRAMEWORK = {
-    'DEFAULT_PARSER_CLASSES': [
+     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
-       'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # or 'rest_framework.authentication.TokenAuthentication', depending on your setup
     ),
-    'DEFAULT_PERMISSION_CLASSES': ( 'rest_framework.permissions.IsAdminUser', ),
-  
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
 
 

@@ -1,0 +1,285 @@
+{% load static %}
+{% load extras %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="POS - Bootstrap Admin Template">
+    <meta name="keywords"
+        content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern,  html5, responsive">
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Service Booking </title>
+    <link rel="shortcut icon" href="{% static 'admin-assets/images/favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static 'admin-assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/intlTelInput.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/flash.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/static-css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.8.4/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="{% static 'admin-assets/css/static-css/broker-css.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/static-css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/static-css/seller-css.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/loader.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/fonts/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin-assets/css/dataTables.bootstrap4.min.css' %}">
+</head>
+
+<body>
+    {% if messages %}
+    <div class="flash animate--drop-in-fade-out">
+        {% for message in messages %}
+        <div class="flash__icon">
+            <i class="icon far fa-check-circle"></i>
+        </div>
+        <span class="flash__body">{{ message }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <script src="{% static 'admin-assets/js/moment.min.js' %}"></script>
+    <script>
+        function ConvertDateTime(createdate, createtime) {
+            var d = createdate + "T" + createtime + "Z";
+            const date = d;
+            const local = moment.utc(date).local().format("Do MMM YYYY hh:mm A");
+            return local;
+        }
+    </script>
+    <div class="broker-dashboard-wrapper">
+        <div class="dash-content-wrap">
+            <div class="header">
+         
+                <a id="mobile_btn" class="mobile_btn" href="#sidebar">
+                    <span class="bar-icon">
+                       
+                    </span>
+                </a>
+                <div class="d-flex align-items-center">
+                    <div class="shadow-header">
+                        <div class="header-title">
+                            <a href="{% url 'frontend:index' %}" class="logo logo-normal w-100">
+                                <img src="{% static 'admin-assets/images/' %}" alt="img">
+                            </a>
+                            <a id="toggle_btn" href="javascript:void(0);">
+                             
+                            </a>
+                        </div>
+                        <div class="navbar navbar-expand-xl header-toggle-expand ms-auto">
+                            <button class="navbar-toggler header-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                                <span class="navbar-toggler-icon">
+                                    <i class="fa fa-bars"></i>
+                                </span>
+                              </button>
+                              <div class="collapse navbar-collapse header-toggle-collapse" id="collapsibleNavbar">
+                                <ul class="nav-user-menu">
+                                    <li class="nav-item">
+                                        <a href="{% url 'frontend:index' %}" class="nav-link me-xxl--2">Home</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'broker:properties_list' %}" class="nav-link me-xxl--2">Properties</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'broker:blogs_list' %}" class="nav-link me-xxl--2">Blogs</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'broker:about_us' %}" class="nav-link me-xxl--2">About us</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'broker:how_we_work' %}" class="nav-link me-xxl--2">Our services</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'broker:contact_us' %}" class="nav-link me-xxl--2">Contact us</a>
+                                    </li>
+                                </ul>
+                              </div>
+                  
+                        </div>
+                    
+                        <ul class="nav user-menu">
+                            <li>
+                                <a onclick="javascript:toggleFullScreen()" title="Toggle Full Screen">
+                                    <i class="fas fa-expand full-screen mt-1"></i>
+                                </a>
+                            </li>
+                            {% comment %} <li class="nav-item dropdown notification-dropdown">
+                                <a href="javascript:void(0);" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+                                    <img src="{% static 'admin-assets/fonts/notification-bing.svg' %}" alt="img" class="bell-icon">
+                                    <span class="badge rounded-pill">{{request.user|notification_count}}</span>
+                                </a>
+                                <div class="dropdown-menu notifications">
+                                    <div class="topnav-dropdown-header">
+                                        <span class="notification-title">Notifications</span>
+                                        <a href="javascript:void(0);" class="clear-noti"> Clear All </a>
+                                       
+                                    </div>
+                                    <div class="noti-content">
+                                        <ul class="notification-list">
+            
+                                            {% if request.user.id|notifications %}
+                                                <li class="notification-message">
+                                                    <a  href="javascript:void(0);">
+                                                        <div class="media d-flex">
+                                                            <span class="avatar flex-shrink-0">                                                
+                                                                <img src="{% static 'admin-assets/images/dp.png' %}" />
+                                                            </span>
+                                                            <div class="media-body flex-grow-1">
+                                                                <p class="noti-details">
+                                                                    <span class="noti-title">This is notification</span>
+                                                                </p>
+                                                                <p class="noti-time">
+                                                                    <span class="notification-time">
+                                                                        <script>
+                                                                            var date = ConvertDateTime("{{ notification.created_on|date:'Y-m-d' }}", "{{ notification.created_on|time:'H:i' }}");
+                                                                            document.write(date);
+                                                                        </script>
+                                                                    </span>
+                                                                    <div style="text-align:right">
+                                                                        {% if notification.is_read %}
+                                                                        <i style="color:#079795" class="fas fa-check-double"></i>
+                                                                        {% else %}
+                                                                        <i  style="color:#079795" class="fas fa-check"></i>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </li> 
+                                            {% else %}
+                                                <li class="notification-message">
+                                                    <p class="pb-0 mb-0 no-notification" style="color: #9f8a8a;"> No New Notifications</p>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                    <div class="topnav-dropdown-footer">
+                                        <a href="{% url 'seller:notifications_list' request.user.id %}">View all Notifications</a>
+                                    </div>
+                                </div>
+                            </li> {% endcomment %}
+            
+                            <li class="nav-item dropdown notification-dropdown">
+                                <a href="javascript:void(0);" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+                                    <img src="{% static 'admin-assets/fonts/notification-bing.svg' %}" alt="img" class="bell-icon">
+                                    <span class="badge rounded-pill">{{request.user|notification_count}}</span>
+                                </a>
+                                <div class="dropdown-menu notifications">
+                                    <div class="topnav-dropdown-header">
+                                        <span class="notification-title">Notifications</span>
+                                        <a href="{% url 'broker:delete_notifications' %}" class="clear-noti"> Clear All </a>
+                                    </div>
+                                    <div class="noti-content">
+                                        <ul class="notification-list">
+                                            {% if request.user.id|notifications %}
+                                                {% for notification in request.user.id|notifications %}
+             
+                                                <li class="notification-message">
+                                                    <a href="{% url 'broker:document_details' notification.property.id %}?n_id={{notification.id}}">
+                                                        <div class="media d-flex">
+                                                            <span class="avatar flex-shrink-0">
+                                                                <img  {% if notification.created_by.profile_pic %}
+                                                                src="{{notification.created_by.profile_pic.url}}" {% else %}
+                                                                src="{% static 'admin-assets/images/dp.png' %}"
+                                                                {% endif %} />
+                                                            </span>
+                                                            <div class="media-body flex-grow-1">
+                                                                <p class="noti-details">
+                                                                    <span class="noti-title">
+                                                                        {% if notification.title %}<b>{{notification.title|truncatechars:50}}</b>{% else %}-{% endif %}
+                                                                    </span>
+                                                                </p>
+                                                                <p class="noti-details">
+                                                                    <span class="noti-title">
+                                                                        {{notification.description}}
+                                                                    </span>
+                                                                </p>
+                                                                <p class="noti-time">
+                                                                    <span class="notification-time">
+                                                                        <script>
+                                                                            var date = ConvertDateTime("{{ notification.created_on|date:'Y-m-d' }}", "{{ notification.created_on|time:'H:i' }}");
+                                                                            document.write(date);
+                                                                        </script>
+                                                                    </span>
+                                                                    <div style="text-align:right">
+                                                                        {% if notification.is_read %}
+                                                                        <i style="color:#2970f6" class="fas fa-check-double"></i>
+                                                                        {% else %}
+                                                                        <i  style="color:#2970f6" class="fas fa-check"></i>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </li> 
+                                                {% endfor %}
+                                            {% else %}
+                                                <li class="notification-message">
+                                                    <p class="pb-0 mb-0 no-notification" style="color: #9f8a8a;"> No New Notifications</p>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                    <div class="topnav-dropdown-footer">
+                                        <a href="{% url 'broker:notifications_list' %}" >View all Notifications</a>
+                                    </div>
+                                </div> 
+                            </li> 
+                            <li class="nav-item dropdown has-arrow main-drop">
+                                <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
+                                    <span class="user-img">
+                                        {% if request.user.profile_pic %}
+                                        <img src="{{request.user.profile_pic.url}}" alt="img" />
+                                        {% else %}
+                                        <img src="{% static 'admin-assets/images/dp.png' %}" alt="img" />
+                                        {% endif %}
+                                        <span class="status online"></span>
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu menu-drop-user">
+                                    <div class="profilename">
+                                        <div class="profileset">
+                                            <span class="user-img">
+                                            {% if request.user.profile_pic %}
+                                            <img src="{{request.user.profile_pic.url}}" alt="img" />
+                                            {% else %}
+                                            <img src="{% static 'admin-assets/images/dp.png' %}" alt="img" />
+                                            {% endif %}
+                                            <span class="status online"></span></span>
+                                            <div class="profilesets">
+                                                <h6>
+                                                    {% if request.user.username %}
+                                                    {{ request.user.username }}
+                                                    {% else %}{{request.user.email|split_email}}{% endif %}
+                                                </h6>
+                                                <h5>
+                                                    Broker
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <hr class="m-0">
+                                        <a class="dropdown-item" href="{% url 'broker:broker_profile' %}"><i class="fas fa-user me-1 ms-1"></i>My Profile</a>
+                                        <a class="dropdown-item" href="{% url 'broker:update_broker_profile' %}"><i class="fa fa-edit me-1 ms-1"></i>Update Profile</a>
+                                        <a class="dropdown-item" href="{% url 'broker:change_broker_password' %}"> <i class="fas fa-unlock-alt me-1 ms-1"></i> Change Password</a>
+                                        <hr class="m-0">
+                                        <a class="dropdown-item logout pb-0" href="{% url 'accounts:logout' %}"><img src="{% static 'admin-assets/fonts/log-out.svg' %}" class="me-2" alt="img">Logout</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                  
+                </div>
+                <div class="dropdown mobile-user-menu">
+                    <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="{% url 'broker:broker_profile' %}">My Profile</a>
+                        <a class="dropdown-item" href="{% url 'broker:update_broker_profile' %}">Update Profile</a>
+                        <a class="dropdown-item" href="{% url 'broker:change_broker_password' %}">Change Password</a>
+                        <a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>

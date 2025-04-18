@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.views import APIView 
 from accounts.models import *
 from api.serializer import *
@@ -26,12 +25,41 @@ class SendOtp(APIView):
         mobile_no = request.data.get('mobile_no')
         if not mobile_no:
             return Response({"message":"Mobile number is required","status":status.HTTP_400_BAD_REQUEST},status=status.HTTP_400_BAD_REQUEST)
-        if User.objects.filter(mobile_no=mobile_no).exists():
+        if User.objects.filter(mobile_no=mobile_no,user_status=ACTIVE).exists():
             return Response({"message":"Mobile number already exists","status":status.HTTP_400_BAD_REQUEST},status=status.HTTP_400_BAD_REQUEST)
         User.objects.create(mobile_no=mobile_no,role_id=USER)
         otp=send_otp_view(mobile_no)
         return Response({"otp":otp,"message":"An OTP has sent to your mobile number","status":status.HTTP_200_OK},status=status.HTTP_200_OK)
 
+
+class ResendOTP(APIView):
+    permission_classes = [permissions.AllowAny,]
+    parser_classes = [MultiPartParser]
+    @swagger_auto_schema(
+        tags=['User Authentication'],
+        operation_id = "ResendOTP",
+        operation_description = "ResendOTP",
+        manual_parameters = [
+            openapi.Parameter('mobile_no',openapi.IN_FORM,type=openapi.TYPE_STRING,required=True,description="Mobile number"),
+        ]
+    )
+    def post(self,request,*args,**kwargs):
+        mobile_no = request.data.get('mobile_no')
+        if not mobile_no:
+            return Response({"message":"Mobile number is required","status":status.HTTP_400_BAD_REQUEST},status=status.HTTP_400_BAD_REQUEST)
+        if not User.objects.filter(mobile_no=mobile_no).exists():
+            return Response({"message":"Mobile number does not exist","status":status.HTTP_400_BAD_REQUEST},status=status.HTTP_400_BAD_REQUEST)
+        try:
+            phone_otp = PhoneOTP.objects.get(phone_number=mobile_no)
+        except PhoneOTP.DoesNotExist:
+            return Response({"message":"OTP does not exist","status":status.HTTP_400_BAD_REQUEST},status=status.HTTP_400_BAD_REQUEST)
+        if phone_otp.is_expired():
+            phone_otp.delete()
+            otp = send_otp_view(mobile_no)
+            return Response({"otp":otp,"message":"An OTP has sent to your mobile number","status":status.HTTP_200_OK},status=status.HTTP_200_OK)
+        else:
+            otp = send_otp_view(mobile_no)
+            return Response({"otp":otp,"message":"An OTP has sent to your mobile number","status":status.HTTP_200_OK},status=status.HTTP_200_OK)
 
 class VerifyOtp(APIView):
     permission_classes = [permissions.AllowAny,]
@@ -82,14 +110,14 @@ class ServiceproviderSignup(APIView):
         tags=['Service Provider Authentication'],
         operation_id = "ServiceproviderSignup",
         operation_description = "ServiceproviderSignup",
-        manual_parameters = [
-            openapi.Parameter('name',openapi.IN_FORM,type=openapi.TYPE_STRING),
-            openapi.Parameter('email',openapi.IN_FORM,type=openapi.TYPE_STRING),
-            openapi.Parameter('mobile_no',openapi.IN_FORM,type=openapi.TYPE_STRING),
-            openapi.Parameter('document_type',openapi.IN_FORM,type=openapi.TYPE_INTEGER),
-            openapi.Parameter('document_file',openapi.IN_FORM,type=openapi.TYPE_FILE),
-            openapi.Parameter('password',openapi.IN_FORM,type=openapi.TYPE_STRING),
-        ]
+            manual_parameters = [
+                openapi.Parameter('name',openapi.IN_FORM,type=openapi.TYPE_STRING),
+                openapi.Parameter('email',openapi.IN_FORM,type=openapi.TYPE_STRING),
+                openapi.Parameter('mobile_no',openapi.IN_FORM,type=openapi.TYPE_STRING),
+                openapi.Parameter('document_type',openapi.IN_FORM,type=openapi.TYPE_INTEGER),
+                openapi.Parameter('document_file',openapi.IN_FORM,type=openapi.TYPE_FILE),
+                openapi.Parameter('password',openapi.IN_FORM,type=openapi.TYPE_STRING),
+            ]
     )
     def post(self,request):
         name= request.data.get('name')
@@ -140,9 +168,11 @@ class ServiceproviderLogin(APIView):
             user = User.objects.get(email=email)
             provider = ServiceProviderInfo.objects.get(user=user)
         except User.DoesNotExist:
-            return Response({"messages":"User does not exist","status":status.HTTP_404_NOT_FOUND},status=status.HTTP_404_NOT_FOUND)
-        if provider.verification_status != VERIFIED:
-            return Response({"messages":"Your Profile is not verified.Please wait for admin approval","status":status.HTTP_404_NOT_FOUND},status=status.HTTP_404_NOT_FOUND)
+            return Response({"messages":"User does not exist","status":status.HTTP_400_BAD_REQUEST},status=status.HTTP_400_BAD_REQUEST)
+        if provider.verification_status == PENDING:
+            return Response({"messages":"Your Profile is not verified.Please wait for admin approval","status":status.HTTP_400_BAD_REQUEST},status=status.HTTP_400_BAD_REQUEST)
+        if provider.verification_status == REJECTED:
+            return Response({"messages":"Your Profile is rejected by the admin","status":status.HTTP_400_BAD_REQUEST},status=status.HTTP_400_BAD_REQUEST)
         if not user.check_password(password):
             return Response({"messages":"Invalid password","status":status.HTTP_400_BAD_REQUEST},status=status.HTTP_400_BAD_REQUEST)
         refresh = RefreshToken.for_user(user)

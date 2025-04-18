@@ -1,0 +1,67 @@
+{% load static %}
+{% load extras %}
+{% if request.user.is_authenticated  %}
+{% include 'customer/includes/header.html' %}
+{% else %}
+{% include 'frontend/includes/header.html' %}
+{% endif %}
+<section class="page-title-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-title-wrapper text-center">
+                    <h1 class="page-title mb-10">Our Services</h1>
+                    <div class="breadcrumb-menu">
+                        <nav aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs">
+                            <ul class="trail-items">
+                                <li class="trail-item trail-begin"><a
+                                        href="{% url 'frontend:index' %}"><span>Home</span></a></li>
+                                <li class="trail-item trail-end">
+                                    <a href="{% url 'frontend:how_we_work' %}"><span>Our Services</span></a></li>
+                                <li class="trail-item trail-end"><span>View Service</span></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="about-us" class="about-us-wrapper">
+    <div class="download-app-wrapper section-ptb">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="about-wrapper">
+                        {% if data %}
+                        <div class="section-heading mb-md-0 mb-10 justify-content-center">
+                            <h3>{{data.title}}</h3>
+                            <span class="heading-line">
+                                <div class="rectangle-outer">
+                                    <span class="rectangle-box"></span>
+                                </div>
+                            </span>
+                        </div>
+                        <div class="mt-35 paragraph-text">{{data.description|safe}}</div>
+                        {% else %}
+                        <div class="section-heading mb-md-0 mb-10 justify-content-center">
+                            <h3>{{data}}</h3>
+                            <span class="heading-line">
+                                <div class="rectangle-outer">
+                                    <span class="rectangle-box"></span>
+                                </div>
+                            </span>
+                        </div>
+                        <p class="paragraph-text mt-2">No Data Found</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% if request.user.is_authenticated  %}
+{% include 'customer/includes/footer.html' %}
+{% else %}
+{% include 'frontend/includes/footer.html' %}
+{% endif %}

@@ -1,0 +1,89 @@
+{% include 'seller/includes/header.html' %}
+{% load static %}
+{% load extras %}
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'seller/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'seller:seller_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Profile</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12 mx-auto">
+                            <div class="card">
+                                <div class="card-body p-0">
+                                    <div class="card-header d-flex align-items-center justify-content-between">
+                                        <h4 class="card-title">Profile Details</h4>
+                                        <a href="{% url 'seller:update_seller_profile' %}" class="edit-btn"><i class="fa fa-fw fa-pencil me-0"></i>
+                                        </a>
+                                    </div>
+                                    <div class="sidebar-widget">
+                                        
+                                            <div class="author-box clearfix">
+                                                <div class="profile-img-wrapper">
+                                                    {% if user.profile_pic %}
+                                                    <img src="{{user.profile_pic.url}}" alt="img">
+                                                    {% else %}
+                                                    <img src="{% static 'admin-assets/images/dp.png' %}" alt="img">
+                                                    {% endif %}
+                                                    <div class="file btn btn-lg btn-primary">
+                                                        <i class="fa fa-camera"></i>
+                                                        <form action="{% url 'seller:update_profile_pic' %}" method="post" enctype="multipart/form-data">
+                                                            <input type="file" name="profile_pic" id="profile_pic" accept="image/*"  onchange="this.form.submit()" class="form-control">
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                             
+                                                <div class="author-info">
+                                                    <h4 class="author__title">{% if user.full_name %}{{user.full_name}}{% else %}{{user.email|split_email}}{% endif %}</h4>
+                                                </div>
+                                            </div>
+                                            <form class="custom-form">
+                                            <div class="inner_card pt-0">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <small class="text-muted">First Name: </small>
+                                                        <p>{% if user.first_name %}{{user.first_name}}{% else %}--{% endif %}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <small class="text-muted">Last Name: </small>
+                                                        <p>{% if user.last_name %}{{user.last_name}}{% else %}--{% endif %}</p>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="col-md-6">
+                                                        <small class="text-muted">Email address: </small>
+                                                        <p>{% if user.email %}{{user.email}}{% else %}--{% endif %}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <small class="text-muted">Contact Number: </small>
+                                                        <p>{% if user.mobile_no %}{% if user.country_code %}{{user.country_code}}{% endif %}{{user.mobile_no}}{% else %}--{% endif %}</p>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="col-md-6">
+                                                        <small class="text-muted">Address: </small>
+                                                        <p>{% if user.address %}{{user.address}}{% else %}--{% endif %}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <small class="text-muted">Personal Info: </small>
+                                                        <p>{% if user.bio %}{{user.bio | safe}}{% endif %}</p>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% include 'seller/includes/footer.html' %}

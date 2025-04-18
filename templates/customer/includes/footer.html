@@ -1,0 +1,97 @@
+{% load static %}
+</div>
+<footer class="user-footer">
+    <section class="footer-card ">
+        <div class="container">
+            <div class="copyright-card">
+                <p>Copyright © 2023 BROKI-FI | All Rights Reserved.</p>
+            </div>
+        </div>
+    </section>
+</footer>
+</div>
+<script src="{% static 'admin-assets/js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.fancybox.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/swiper-js/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/script.js' %}"></script>
+<script src="{% static 'admin-assets/js/validate.js' %}"></script>
+<script src="{% static 'admin-assets/js/additional-methods.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/feather.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/intlTelInput-jquery.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/dashbaord.js' %}"></script>
+<script src="{% static 'admin-assets/js/sweetalert.js' %}"></script>
+<script src="{% static 'admin-assets/js/ckeditor-validation.js' %}"></script>
+<script src="https://cdn.ckeditor.com/4.17.2/standard/ckeditor.js"></script>
+</body>
+
+</html>
+<script>
+
+(function () {
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    };
+})();
+
+ $('.action_confirm').click(function(event) {
+        event.preventDefault();        
+        swal({
+            title: $(this).attr('message'),
+            text: "",
+            icon: "warning",
+            buttons: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                location.href=$(this).attr('href')
+                Loader()
+            }
+        });
+    });
+</script>
+<script>
+    var slider = new Swiper ('.gallery-slider', {
+        slidesPerView: 1,
+        centeredSlides: true,
+        loop: false,
+        loopedSlides: 6, 
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+    });
+    
+    var thumbs = new Swiper ('.gallery-thumbs', {
+        slidesPerView: 'auto',
+        spaceBetween: 10,
+        centeredSlides: true,
+        loop: false,
+        slideToClickedSlide: true,
+    });
+    slider.controller.control = thumbs;
+    thumbs.controller.control = slider;
+
+
+    // window resize on media query //
+    $(window).on("load, resize", function mobileViewUpdate() {
+        var viewportWidth = $(window).width();
+        if (viewportWidth < 991) {
+                $("body").addClass("mini-sidebar");
+        }
+        if (viewportWidth > 991) {
+                $("body").removeClass("mini-sidebar");
+        }
+    });
+    $(document).ready( function () {
+        var viewportWidth = $(window).width();
+        if (viewportWidth < 991) {
+                $("body").addClass("mini-sidebar");
+        }
+        if (viewportWidth > 991) {
+                $("body").removeClass("mini-sidebar");
+        }
+    });
+</script>

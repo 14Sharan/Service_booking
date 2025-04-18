@@ -1,0 +1,352 @@
+{% include 'customer/includes/header.html' %}
+{% load static %}
+<section class="page-title-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-title-wrapper text-center">
+                    <h1 class="page-title mb-10">Edit Profile</h1>
+                    <div class="breadcrumb-menu">
+                        <nav aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs">
+                            <ul class="trail-items">
+                                <li class="trail-item trail-begin"><a href="{% url 'customer:customer_dashboard' %}"><span>Home</span></a></li>
+                                <li class="trail-item trail-end"><span>Edit Profile</span></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="user_dashboard py-5">
+    <div class="container">
+        <div class="dashboard_area">
+            <div class="row">
+                {% include 'customer/includes/sidebar.html' %}
+                <div class="col-xl-9 col-lg-8 wow">
+                    <div class="dashboard_content">
+                        <div class="inner_card">
+                            <div class="db_head">
+                                <div class="db_inr_hd">
+                                    <h4>Edit Profile</h4>
+                                </div>
+                            </div>
+                            <form id="edit-profile" onsubmit="return CheckAddress(this.id)" method="POST" enctype="multipart/form-data" class="custom-form">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>First Name</label>
+                                            <input class="form-control" type="text" {% if user.first_name %}value="{{ user.first_name }}"{% else %}placeholder="Please enter first name"{% endif %} name="first_name" maxlength="50">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>Last Name</label>
+                                            <input class="form-control" type="text" {% if user.last_name %}value="{{ user.last_name }}"{% else %}placeholder="Please enter last name"{% endif %} name="last_name" maxlength="50">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>Email address</label>
+                                            <input type="text" {% if user.email %}value="{{ user.email }}"{% else %}placeholder="Enter Email"{% endif %} maxlength="50" name="email" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>Birth Date</label>
+                                            <input type="date" {% if user.dob %}value="{{user.dob|date:'Y-m-d'}}"{% endif %} class="form-control" type="date" name="dob" id="dob">
+                                        </div>
+                                    </div>
+                                  
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>Address</label>
+                                            <input type="text" {% if user.address %}value="{{ user.address }}"{% else %}placeholder="Enter Address"{% endif %} maxlength="500" name="address" id="address" class="form-control">
+                                            <input type="hidden" name="latitude" id="latitude" {% if user.latitude %}value="{{user.latitude}}" {% else %}value="30.6800"{% endif %}>
+                                            <input type="hidden" name="longitude" id="longitude" {% if user.longitude %}value="{{user.longitude}}"{% else %}value="76.7221"{% endif %}>
+                                            <span class="edit-profile-error error" ></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>State</label>
+                                            <input type="text" {% if user.state %}value="{{ user.state }}"{% else %}placeholder="Enter State"{% endif %} maxlength="500" name="state" id="state" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>Country</label>
+                                            <input type="text" {% if user.country %}value="{{ user.country }}"{% else %}placeholder="Enter Country"{% endif %} maxlength="500" name="country" id="country" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label>Mobile Number</label>
+                                            <input id="country_code" type="hidden" value="{{user.country_code}}" name="country_code" class="form-control" maxlength="20">
+                                            <input type="hidden" value="{{user.country_iso_code}}"  name="country_iso_code" id="country_iso_code" class="form-control"  maxlength="10">
+                                            <input id="mobile_no" type="text" onkeypress="return /[0-9]/i.test(event.key)" placeholder="Enter Phone Number" value="{% if user.mobile_no %}{{user.mobile_no}}{% endif %}" name="mobile_no" class="form-control" maxlength="20">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label>Company/Organization</label>
+                                            <input type="text" {% if user.company %} value="{{user.company}}" {% else %} placeholder = " Enter Company/Organization Name" {% endif %}class="form-control" type="date" name="company" id="company" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label>Personal Info</label>
+                                            <textarea name="bio" class="form-control" type="text" {% if not user.bio %}placeholder="Please enter personal information" {% endif %}>
+                                                {% if user.bio %}{{user.bio}}{% endif %}
+                                            </textarea>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-md-12">
+                                        <div class="form-group upload-cntnt-card">
+                                            <input type="file" class="form-control" id="inputGroupFile01">
+                                            <div class="upload-content-here">
+                                                <div>
+                                                <h4>Upload Your Signature Here</h4>
+                                                <p>110 x 100 px, Max. 115 KB.</p>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        <div class="upload-cntnt-view d-flex align-items-center justify-content-between mb-3">
+                                            <div class="upload-icn-view">
+                                                 <img src="{% static 'admin-assets/images/blog-1.png' %}" alt="Thumb">
+                                                 <h4>Content name 1</h4>
+                                            </div>
+                                            <a class="trash-btn" href="javascript:void(0);">
+                                                <i class="far fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </div> -->
+                                    <div class="col-md-12">
+                                        <div class="text-end mt-3">
+                                            <button type="submit" class="theme-btn">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'customer/includes/footer.html' %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_PLACES_KEY}}&libraries=places&callback=CheckAddress" async defer></script>
+
+<script>
+    CKEDITOR.replace("bio", {
+        disallowedContent: 'img'
+    });
+</script>
+<script>
+    if ($('textarea').val()) {
+        $('textarea').val($('textarea').val().trim())
+    }
+    $("#address").keyup(function () {
+        var autocomplete = new google.maps.places.Autocomplete($("#address")[0], {});
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            var place = autocomplete.getPlace();
+            $('#latitude').val(place.geometry.location.lat())
+            $('#longitude').val(place.geometry.location.lng())
+        });
+    });
+    $('#address').change(function(){
+        $('.edit-profile-error').text("");
+    })
+    $('#address').on('keypress', function(e) {
+        return e.which !== 13;
+    });
+    function CheckAddress(formID){
+        if ($('#'+formID).length){
+            if ($('#'+formID).valid()){
+                if ($('#latitude').val() == "" && $('#longitude').val() == ""){
+                    $('.'+formID+'-error').text("Please enter a valid location")
+                    return false;
+                }
+                else{
+                    $('.'+formID+'-error').text("")
+                    Loader(formID);
+                    return true;
+                }
+            }
+        }
+    }
+    // For country code picker intlTelInputGlobals
+    $("#mobile_no").intlTelInput({
+        initialCountry: "{% if user.country_iso_code %}{{user.country_iso_code}}{% else %}auto{% endif %}",
+        separateDialCode: true,
+    }).on('countrychange', function (e, countryData) {
+        $('#country_code').val($('.iti__selected-dial-code').text())
+        $('#country_iso_code').val($("#mobile_no").intlTelInput("getSelectedCountryData").iso2)
+    });
+    jQuery.validator.addMethod("is_email_exists",
+    function (value, element) {
+        let is_valid = true
+        $.ajax({
+            url: "{% url 'accounts:validations' %}",
+            type: "GET",
+            data: { email: value, id:"{{user.id}}"},
+            async: false,
+            success: function (data) {
+                if (data.email == true) {
+                    is_valid = false
+                } else {
+                    is_valid = true
+                }
+
+            },
+        });
+        return is_valid
+    },
+    'Email already exists!');
+    jQuery.validator.addMethod("is_mobile_exists",
+    function (value, element) {
+        let is_valid = true
+        $.ajax({
+            url: "{% url 'accounts:validations' %}",
+            type: "GET",
+            data: { mobile_no: value, country_code: $('#country_code').val(), id:"{{user.id}}"},
+            async: false,
+            success: function (data) {
+                if (data.mobile_no == true) {
+                    is_valid = false
+                } else {
+                    is_valid = true
+                }
+
+            },
+        });
+        return is_valid
+    },
+    'Mobile number already exists!');
+    $("#edit-profile").validate({
+        rules: {
+            first_name: {
+                required: true,
+                // ckspecial: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                minlength:3,
+                maxlength:55,
+            },
+            last_name: {
+                required: true,
+                // ckspecial: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                minlength:3,
+                maxlength:55,
+            },
+            address: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            },
+            state: {
+                required: true,
+                // ckcharonly: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            },
+            country: {
+                required: true,
+                // ckcharonly: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                }
+            },
+            email: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                is_email_exists: true,
+                email: true,
+            },
+            mobile_no: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+                number: true,
+                is_mobile_exists: true,
+                minlength: 8,
+                maxlength: 15,
+            },
+            dob: {
+                required: true,
+            },
+            bio: {
+                required: true,
+                normalizer: function (value) {
+                    return $.trim(value);
+                },
+            },
+        },
+        messages: {
+            first_name: {
+                required: "Please enter first name",
+                minlength:"First name should be at least 3 characters",
+                maxlength:"First name should not be more than 55 characters",
+                // ckspecial: "No Special Charaters allowed except [, . - _ / ']"
+            },
+            last_name: {
+                required: "Please enter last name",
+                minlength:"Last name should be at least 3 characters",
+                maxlength:"Last name should not be more than 55 characters",
+                // ckspecial: "No Special Charaters allowed except [, . - _ / ']"
+            },
+            address: {
+                required: "Please enter address"
+            },
+            state: {
+                required: "Please enter state",
+                // ckcharonly: "Only Charaters are allowed"
+            },
+            country: {
+                required: "Please enter country",
+                // ckcharonly: "Only Charaters are allowed"
+            },
+            email: {
+                required: "Please enter your email address",
+            },
+            mobile_no: {
+                required: "Please enter your mobile number",
+                minlength: "Mobile number should be at least 8 digits",
+                maxlength: "Mobile number should not be more than 15 digits",
+            },
+            dob: {
+                required: "Please select birth date"
+            },
+            bio: {
+                required: "Please enter personal information"
+            }
+        }
+    });  
+    $(function () {
+        var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var maxDate = year - 18 + '-' + month + '-' + day;
+        $('#dob').attr('max', maxDate);
+    }); 
+
+</script>

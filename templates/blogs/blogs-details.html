@@ -1,0 +1,77 @@
+{% load static %}
+{% load extras %}
+{% if request.user.is_authenticated  %}
+{% include 'customer/includes/header.html' %}
+{% else %}
+{% include 'frontend/includes/header.html' %}
+{% endif %}
+
+<!-- page title area start  -->
+<section class="page-title-area" style="background-image: url(./assets/images/page-banner.png);">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-title-wrapper text-center">
+                    <h1 class="page-title mb-10">Blog Detail</h1>
+                    <div class="breadcrumb-menu">
+                        <nav aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs">
+                            <ul class="trail-items">
+                                <li class="trail-item trail-begin"><a href="{% url 'frontend:index' %}"><span>Home</span></a></li>
+                                <li class="trail-item trail-end"><span>Blog Detail</span></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- page title area end  -->
+
+
+<div class="blog-single-area py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="blog-single-wrapper">
+                            <div class="blog-single-content">
+                                <div class="blog-thumb-img">
+                                    {% if blog.image %}
+                                    <img src="{{blog.image.url}}" alt="thumb">
+
+                                    {% else %}
+                                    <img src="assets/images/digital-content.png" alt="thumb">
+                                    {% endif %}
+                                </div>
+                                <div class="blog-info">
+                                    <div class="blog-meta">
+                                        <div class="blog-meta-left">
+                                            <ul>
+                                                <li><i class="far fa-user"></i><a href="#">{% if blog.created_by.full_name %}{{blog.created_by.full_name}}{% else %}{{blog.created_by.email|split_email}}{% endif %}</a></li>
+                                            </ul>
+                                        </div>
+                                        {% comment %} <div class="blog-meta-right">
+                                            <a href="#" class="share-btn"><i class="far fa-share-alt"></i>Share</a>
+                                        </div> {% endcomment %}
+                                    </div>
+                                    <div class="blog-details">
+                                        <h3 class="blog-details-title mb-20">{% if blog.title %}{{blog.title}}{% else %}-{% endif %}
+                                        </h3>
+                                        <p class="mb-10">
+                                           {% if blog.description %}{{blog.description|safe}}{% else %}-{% endif %}
+                                        </p>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% if request.user.is_authenticated  %}
+{% include 'customer/includes/footer.html' %}
+{% else %}
+{% include 'frontend/includes/footer.html' %}
+{% endif %}

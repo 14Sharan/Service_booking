@@ -1,0 +1,211 @@
+{% include 'admin-includes/header.html' %}
+{% load static %}{% load extras %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a class="white-text" href="{% url 'accounts:metrices' %}">Metrics</a>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        
+        </div>
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+				<div class="card-title mb-0">
+                    Metrics
+                </div>
+                <div class="page-btn">
+                    <a data-bs-toggle="modal" data-bs-target="#add_category" class="btn btn-primary" href=""><i class="fas fa-plus me-1"></i> Metrics</a>
+                </div>
+			</div>
+            <div class="card-body">
+                <div class="dataview">
+                    <form onsubmit="Loader()" action="{% url 'properties:property_category' %}" method="GET">
+                        <div class="table-responsive">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Metrics</th>
+                                        <th>Count</th>
+                                        <th>Created On</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if metrices %}
+                                    {% for metric in metrices %}
+                                    <tr>
+                                        <td> 
+                                        {% if metric.metrice_type == 1 %}
+                                            <span class="badge bg-success">In Property Sale</span>
+                                        {% elif  metric.metrice_type == 2 %}
+                                            <span class="badge bg-warning">Customer Satisfaction</span>
+                                        {% elif  metric.metrice_type == 3 %}
+                                            <span class="badge bg-primary">Property Transaction</span>
+                                        {% elif  metric.metrice_type == 4 %}
+                                            <span class="badge bg-danger">Price Reduced</span>
+                                        {% endif %}
+                                        </td>
+                                        <td>
+                                            {{metric.metric_count}}
+                                        </td>
+                                        <td>
+                                            <script>
+                                                var d = ConvertDateTime("{{ metric.created_on|date:'Y-m-d' }}", "{{ metric.created_on|time:'H:i' }}");
+                                                document.write(d);
+                                            </script>
+                                        </td>
+                                        
+                                        <td>                                    
+                                            <div class="d-flex">
+                                                <a data-bs-toggle="modal" data-bs-target="#edit_category" onclick="GetMetric('{{metric.id}}','{{metric.metric_count}}')" class="btn btn-info shadow btn-xs sharp me-1" href=""><i class="fa fa-edit"></i></a>
+                                                {% comment %} <a style="margin-right:5px" href="{% url 'properties:delete_property_category' category.id %}" message="Are you sure you want to delete this property category?" class="btn btn-danger shadow btn-xs sharp action_confirm" ><i class="fa fa-trash"></i></a> {% endcomment %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="add_category" data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Metric</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form">
+                    <form onsubmit="Loader(this.id)" id="add-metric" action="{% url 'accounts:metrices' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="form-row justify-content-center">
+                                <div class="form-group required-field col-md-12">
+                                    <label class="form-label">Type</label>
+                                        <select name="type" id="type_id" required class="form-control">
+                                            <option value="">Select</option>
+                                            <option value="1">In Property Sale</option>
+                                            <option value="2">Customer Satisfaction</option>
+                                            <option value="3">Property Transaction</option>
+                                            <option value="4">Price Reduced</option>
+                                        </select>
+                                </div>
+                                <div class="form-group required-field col-md-12">
+                                    <label class="form-label">Count</label>
+                                    <input type="text" placeholder="Please enter count" name="count" class="form-control" maxlength="7">
+                                </div>
+                                <div class="col-lg-12 text-center">
+                                    <button type="submit" class="btn btn-primary">Save</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edit_category" data-bs-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update metric</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="basic-form">
+                    <form onsubmit="Loader(this.id)" id="edit-metric" action="{% url 'accounts:edit_metric' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="form-row justify-content-center">
+                                <input type='hidden' name='id' id='id'>
+                                <div class="form-group required-field col-md-12">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" placeholder="Please enter count" name="count" id='count' class="form-control" maxlength="7">
+                                </div>
+                                <div class="col-lg-12 text-center">
+                                    <button type="submit" class="btn btn-primary">Save</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% include 'admin-includes/footer.html' %}
+
+<script>
+    function GetMetric(id,count){
+        $('#id').val(id);
+        $('#count').val(count);
+    }   
+    $("#add-metric").validate({
+        rules: {
+            type: {
+                required: true,
+
+            },
+            count: {
+                required: true,
+                min:1,
+                max: 9999999999,
+
+            },
+
+        },
+        messages: {
+            type: {
+                required: "Please select type",
+                
+            },
+            count: {
+                required: "Please enter count",
+                min:"The minimun count is 1",
+                max: "The maximum count is 1 Billion"
+                
+            },
+            
+        },
+    });   
+    $("#edit-metric").validate({
+        rules: {
+            type: {
+                required: true,
+
+            },
+            count: {
+                required: true,
+                min:1,
+                max: 9999999999,
+            },
+
+        },
+        messages: {
+            type: {
+                required: "Please select type",
+                
+            },
+            count: {
+                required: "Please enter count",
+                min:"The minimun count is 1",
+                max: "The maximum count is 1 Billion"
+                
+            },
+            
+        },
+    });   
+</script>

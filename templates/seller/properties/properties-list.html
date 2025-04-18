@@ -1,0 +1,160 @@
+{% include 'seller/includes/header.html' %}
+{% load static %}
+{% load extras %}
+{% load humanize %}
+
+
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 pl-0 pr-0 user-dash">
+                {% include 'seller/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'seller:seller_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Property List</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card mb-4">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h4 class="card-title">My Properties</h4>
+                                    <a href="{% url 'seller:add_property' %}" class="theme-btn">Add Property
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="sidebar-widget property-form-group">
+                                        <div class="row">
+                                        {% if properties %}
+                                            {% for i in properties %}
+                                            <div class="col-xxl-4 col-md-6 mt-4">
+                                                <div class="property-sale-card">
+                                                    <div class="property-sale-img">
+                                                    {% if i.property_images.all%}
+                                                    <a href="{% url 'seller:property_details' i.id %}"><img src="{{i.property_images.first.image.url}}" alt="logo"></a>
+                                                    {% else %}
+                                                    <a href="{% url 'seller:property_details' i.id %}"><img src="{% static 'admin-assets/images/dp.png' %}" alt="logo"></a>
+                                                    {% endif %}
+                                                        <span class="sale-tag">
+                                                        {% if i.property_for == 1 %}
+                                                        <span>Sale</span>
+                                                        {% else %}
+                                                        <span>Rent</span>
+                                                        {% endif %}
+                                                        
+                                                        </span>
+                                                        <div class="prop-rt-link">
+                                                            <a href="{% url 'seller:update_property' i.id %}">
+                                                                <i class="far fa-pencil"></i>
+                                                            </a>
+                                                             <a style="margin-right:5px" href="{% url 'seller:delete_property' i.id %}" message="Are you sure you want to delete this property?" class="delete-prop action_confirm" ><i class="fa fa-trash"></i>
+                                                             </a>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="property-sale-dis">
+                                                        <h4>{% if i.name %}{{i.name}}{% else %}-{% endif %}</h4>
+                                                        <p><i class="fas fa-map-marker-alt me-1"></i> {{i.address}}</p>
+                                                    </div>
+                                                    <div class="property-sale-feature">
+                                                            <div><i class="fas fa-th-large me-2"></i>{{i.size}} {% if i.unit == 1 %}Square Feet{% else %}Square Meter{% endif %}</div>
+                                                            <div><i class="fas fa-car me-2"></i>{{i.garages}} Garages</div>
+                                                            <div><i class="fas fa-bed-empty me-2"></i>{{i.bedrooms}} Bedrooms</div>
+                                                            <div><i class="fas fa-bath me-2"></i>{{i.bathrooms}} Bathrooms</div>
+                                                    </div>
+                                                    <div class="property-handler">
+                                                        <p class="price-size">Price:
+                                                            {% if i.final_amount %}
+                                                            <b>${{i.final_amount|floatformat:"2g"}}</b><p>
+                                                            {% else %}
+                                                            <b>${{i.cost|floatformat:"2g"}}</b><p>
+                                                            {% endif %}                                                            {% if i.available_from %}
+                                                            <p>Available From:
+                                                                {{i.available_from|date:'Y-m-d'}} to {{i.available_to|date:'Y-m-d'}}
+                                                            </p>
+                                                            {% endif %}
+                                                    </div>
+                                                    <a class="property-sale-cost" href="{% url 'seller:property_details' i.id %}">
+                                                        View details
+                                                        <img class="ms-1" src="{% static 'admin-assets/images/arrow.png' %}" alt="arrow">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        {% else %} 
+                                        <div class='text-center'>
+                                        <img src="{% static 'admin-assets/images/no-data.png' %}">
+                                        <h6>No Properties Added Yet.</h6>
+                                        </div>
+                                        {% endif %} 
+                                       </div>
+                                       {% if properties.has_other_pages %}
+                                       <nav aria-label="Page navigation">
+                                           <ul class="pagination">
+                                               {% if properties.has_previous %}
+                                               <li class="page-item">
+                                                   <a class="page-link"
+                                                       href="?{% url_replace request 'page' properties.previous_page_number %}">&laquo;</a>
+                                               </li>
+                                               {% else %}
+                                               <li class="page-item disabled">
+                                                   <span class="page-link">&laquo;</span>
+                                               </li>
+                                               {% endif %}
+                                               {% for i in properties.paginator.page_range %}
+                                               {% if properties.number == i %}
+                                               <li class="page-item active">
+                                                   <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                                               </li>
+                                               {% elif i > properties.number|add:'-5' and i < properties.number|add:'5' %} <li class="page-item">
+                                                   <a class="page-link" href="?{% url_replace request 'page' i %}">{{ i }}</a>
+                                                   </li>
+                                                   {% endif %}
+                                                   {% endfor %}
+                                                   {% if properties.has_next %}
+                                                   <li class="page-item">
+                                                       <a class="page-link"
+                                                           href="?{% url_replace request 'page' properties.next_page_number %}">&raquo;</a>
+                                                   </li>
+                                                   {% else %}
+                                                   <li class="page-item disabled">
+                                                       <span class="page-link">&raquo;</span>
+                                                   </li>
+                                                   {% endif %}
+                                           </ul>
+                                       </nav>
+                                       {% endif %}
+                                    </div>
+                                    
+                                    
+                                    {% comment %} <ul class="pagination">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="javascript:void(0);" tabindex="-1">Previous</a>
+                                        </li>
+                                        <li class="page-item active">
+                                            <a class="page-link" href="javascript:void(0);">1 <span class="sr-only">(current)</span></a>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="javascript:void(0);">3</a></li>
+                                        <li class="page-item"><a class="page-link" href="javascript:void(0);">3</a></li>
+                                        <li class="page-item"><a class="page-link" href="javascript:void(0);">5</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="javascript:void(0);">Next</a>
+                                        </li>
+                                    </ul> {% endcomment %}
+
+                                </div>
+                            </div>
+        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% include 'seller/includes/footer.html' %}

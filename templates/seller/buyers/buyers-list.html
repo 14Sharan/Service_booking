@@ -1,0 +1,299 @@
+{% include 'seller/includes/header.html' %}
+{% load static %}
+{% load extras %}
+
+
+<section class="user-page section-padding">
+    <div class="container-fluid">
+        <div class="row m-0">
+            <div class="col-lg-3 col-md-12 col-xs-12 pl-0 pr-0 user-dash">
+                {% include 'seller/includes/sidebar.html' %}
+            </div>
+            <div class="col-lg-12 pl-0 user-dash2">
+                <ul class="breadcrumbs">
+                    <li class="breadcrumb-item"><a href="{% url 'seller:seller_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Clients Management</li>
+                </ul>
+                <div class="page-body-wrapper">
+                    <div class="row">
+                        <div class="col-md-12 mx-auto">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Clients Management</h4>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="sidebar-widget my-properties">
+                                      
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane active" id="home">
+                                                <div class="sidebar-widget my-properties pt-4">
+                                                    <form onsubmit="Loader()" action="" method="GET">
+                                                        <div class="table-responsive">
+                                                            <table class="table datatable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="pl-2">Buyer Name</th>
+                                                                        <th>Property</th>
+                                                                        <th>Transaction Type</th>
+                                                                        <th>Transaction Date</th>
+                                                                        <th>Action</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <thead>
+                                                                    <tr class="search-row">
+                                                                        <td><input type="text" value="{{name}}" class="form-control" name="name" maxlength="20"></td>
+                                                                        <td><input type="text" value="" class="form-control" name="" maxlength="20" disabled></td>
+                                                                        <td><input type="text" value="{{email}}" class="form-control" name="email" maxlength="20" disabled></td>
+                                                                        <td><input type="text" value="{{mobile}}" class="form-control" name="mobile" maxlength="50" disabled></td>
+                                                                        <td><button type="submit" class="theme-btn">Search</button></td>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody >
+                                                                    {% for user in new_buyers %}
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div class="d-flex align-items-center">
+                                                                                <div class="user-img">
+                                                                                    <a ><img alt="user" {% if user.profile_pic %}src="{{user.profile_pic.url}}"{% else %}src="{% static 'admin-assets/images/dp.png' %}"{% endif %}  class="img-fluid"></a>
+                                                                                </div>
+                                                                                <div class="inner ms-3">
+                                                                                    <a>
+                                                                                        <h2>{% if user.full_name %}{{user.full_name}}{% else %}{{user.email|split_email}}{% endif %}</h2>
+                                                                                    </a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="d-flex">
+                                                                                <div class="image myelist">
+                                                                                    <a href=""><img
+                                                                                            alt="my-properties-3"
+                                                                                            src="{% static 'admin-assets/images/property-1.jpg' %}"
+                                                                                            class="img-fluid"></a>
+                                                                                </div>
+                                                                                <div class="inner ms-3">
+                                                                                    <a href="">
+                                                                                        <h2>Luxury Villa House</h2>
+                                                                                    </a>
+                                                                                    <figure><i class="lni-map-marker"></i> Est St, 77 -
+                                                                                        Central Park South, NYC</figure>
+                                                                                    <ul class="starts text-left mb-0">
+                                                                                        <li class="mb-0"><i class="fa fa-star"></i>
+                                                                                        </li>
+                                                                                        <li class="mb-0"><i class="fa fa-star"></i>
+                                                                                        </li>
+                                                                                        <li class="mb-0"><i class="fa fa-star"></i>
+                                                                                        </li>
+                                                                                        <li class="mb-0"><i class="fa fa-star"></i>
+                                                                                        </li>
+                                                                                        <li class="mb-0"><i class="fa fa-star"></i>
+                                                                                        </li>
+                                                                                        <li class="ml-3 mb-0">(6 Reviews)</li>
+                                                                                    </ul>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                            
+                                                                        <td>Sales and Lease/Renting</td>
+                                                                        <td>2023-10-20</td>
+                                                                        <td><a href="{% url 'seller:view_buyers_details' user.id %}" class="theme-btn">View Details</a></td>
+
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                
+                                                {% if new_buyers.has_other_pages %}
+                                                        <nav aria-label="Page navigation">
+                                                            <ul class="pagination">
+                                                                {% if new_buyers.has_previous %}
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?{% url_replace request 'page' new_buyers.previous_page_number %}">&laquo;</a>                                          
+                                                                    </li>
+                                                                {% else %}
+                                                                    <li class="page-item disabled">
+                                                                        <span class="page-link">&laquo;</span>
+                                                                    </li>
+                                                                {% endif %}
+                                                                {% for i in new_buyers.paginator.page_range %}
+                                                                    {% if new_buyers.number == i %}
+                                                                        <li class="page-item active">
+                                                                            <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                                                                        </li>
+                                                                    {% elif i > new_buyers.number|add:'-5' and i < new_buyers.number|add:'5' %}
+                                                                        <li class="page-item">
+                                                                            <a class="page-link" href="?{% url_replace request 'page' i %}">{{ i }}</a>
+                                                                        </li>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                                {% if new_buyers.has_next %}
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?{% url_replace request 'page' new_buyers.next_page_number %}">&raquo;</a>
+                                                                    </li>
+                                                                {% else %}
+                                                                    <li class="page-item disabled">
+                                                                        <span class="page-link">&raquo;</span>
+                                                                    </li>
+                                                                {% endif %}
+                                                            </ul>
+                                                        </nav>
+                                                {% endif %}
+                                            </div>
+
+                                            <div role="tabpanel" class="tab-pane" id="profile">
+                                                <div class="sidebar-widget my-properties pt-4">
+                                                    <form onsubmit="Loader()" action="" method="GET">
+                                                        <div class="table-responsive">
+                                                            <table class="table datatable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="pl-2"> Buyer Name</th>
+                                                                        <th>Email Address</th>
+                                                                        <th>Contact Number</th>
+                                                                        <th>Action</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <thead>
+                                                                    <tr class="search-row">
+                                                                        <td><input type="text" value="{{cname}}" class="form-control" name="cname" maxlength="20"></td>
+                                                                        <td><input type="text" value="{{cemail}}" class="form-control" name="cemail" maxlength="20"></td>
+                                                                        <td><input type="text" value="{{cmobile}}" class="form-control" name="cmobile" maxlength="50"></td>
+                                                                        <td><button type="submit" class="theme-btn">Search</button></td>
+                                                                    </tr>
+                                                                </thead>
+
+                                                                <tbody>
+                                                                    {% for user in crm_users %}
+                                                                        <tr>
+                                                                            <td>
+                                                                                <div class="d-flex align-items-center">
+                                                                                    <div class="user-img">
+                                                                                        <a ><img alt="user" {% if user.created_by.profile_pic %}src="{{user.created_by.profile_pic.url}}"{% else %}src="{% static 'admin-assets/images/dp.png' %}"{% endif %}  class="img-fluid"></a>
+                                                                                    </div>
+                                                                                    <div class="inner ms-3">
+                                                                                        <a >
+                                                                                            <h2>{% if user.created_by.full_name %}{{user.created_by.full_name}}{% else %}{{user.created_by.email|split_email}}{% endif %}</h2>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>{{user.created_by.email}}</td>
+                                                                            <td>{% if user.created_by.mobile_no %}{{user.created_by.mobile_no}}{% else %}-{% endif %}</td>
+                                                                            <td><a href="{% url 'seller:crm_details' user.id %}" class="theme-btn">View details</i></a></td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                {% if crm_users.has_other_pages %}
+                                                    <nav aria-label="Page navigation">
+                                                        <ul class="pagination">
+                                                            {% if crm_users.has_previous %}
+                                                                <li class="page-item">
+                                                                    <a class="page-link" href="?{% url_replace request 'spage' crm_users.previous_page_number %}">&laquo;</a>                                          
+                                                                </li>
+                                                            {% else %}
+                                                                <li class="page-item disabled">
+                                                                    <span class="page-link">&laquo;</span>
+                                                                </li>
+                                                            {% endif %}
+                                                            {% for i in crm_users.paginator.page_range %}
+                                                                {% if crm_users.number == i %}
+                                                                    <li class="page-item active">
+                                                                        <span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+                                                                    </li>
+                                                                {% elif i > crm_users.number|add:'-5' and i < crm_users.number|add:'5' %}
+                                                                    <li class="page-item">
+                                                                        <a class="page-link" href="?{% url_replace request 'spage' i %}">{{ i }}</a>
+                                                                    </li>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            {% if crm_users.has_next %}
+                                                                <li class="page-item">
+                                                                    <a class="page-link" href="?{% url_replace request 'spage' crm_users.next_page_number %}">&raquo;</a>
+                                                                </li>
+                                                            {% else %}
+                                                                <li class="page-item disabled">
+                                                                    <span class="page-link">&raquo;</span>
+                                                                </li>
+                                                            {% endif %}
+                                                        </ul>
+                                                    </nav>
+                                                {% endif %}
+                                            </div> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="copyright-footer">
+        <p class="mb-0 text-center">
+            Broki-fi
+        </p>
+    </div>
+</footer>
+</div>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+
+{% comment %} <script src="{% static 'admin-assets/js/jquery-3.6.0.min.js' %}"></script> {% endcomment %}
+<script src="{% static 'admin-assets/js/jquery.fancybox.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/swiper-js/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/script.js' %}"></script>
+<script src="{% static 'admin-assets/js/validate.js' %}"></script>
+<script src="{% static 'admin-assets/js/additional-methods.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/feather.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/jquery.slimscroll.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/intlTelInput-jquery.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/sweetalert.js' %}"></script>
+<script src="https://cdn.ckeditor.com/4.17.2/standard/ckeditor.js"></script>
+<script src="{% static 'admin-assets/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'admin-assets/js/dataTables.bootstrap4.min.js' %}"></script>
+
+
+<script>
+    $(document).ready( function () {
+        $('.datatable').DataTable({
+            "bSort": true,
+            "bPaginate": false,
+            "searching": false,
+            "bDestroy": true,
+            "bInfo" : false,
+            "aaSorting": [],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [-1]
+            }]
+        });
+    });
+    
+    $(document).ready(function(){
+        $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
+        });
+        var activeTab = localStorage.getItem('activeTab');
+        if(activeTab){
+            $('#myTab a[href="' + activeTab + '"]').tab('show');
+        }
+    });
+</script>
